@@ -14,7 +14,7 @@ public class NumeroLinea extends JPanel
     public final static float CENTER = 0.5f;
     public final static float RIGHT = 1.0f;
     private Color color1 = new Color(0,150,255);
-    private final static Border OUTER = new MatteBorder(0, 0, 0, 2,Color.BLUE);
+    private final static Border OUTER = new MatteBorder(0, 0, 0, 3,Color.BLUE);
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 

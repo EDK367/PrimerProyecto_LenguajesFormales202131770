@@ -30,7 +30,7 @@ public class analizadorLexico {
         this.columnaActual = 1;
     }
     
-    private final String[] salto = {"\n"};
+    private final String[] salto = {" \n"};
     private final String[] identificadorEsp={"_"};
     //identificador especial el cual servira para poder usar el guion bajo
     private final String[] aritmeticos = {"+","-","**","/","//","%","*"};
@@ -83,7 +83,10 @@ public class analizadorLexico {
         filaActual++;
         columnaActual=0;
     }//final de salto de linea
-  
+   private void regresarLinea(){
+        filaActual--;
+        columnaActual++;
+    }
     //bloque el cual me servira para almacenar y trabajar los comentarios
     private String comentario(){
      StringBuilder lexema = new StringBuilder();
@@ -297,15 +300,26 @@ tokens.add(new Token(lexema2+lexema, "Comentario", filaActual, columnaActual-lex
             String lexema2 = Character.toString(caracterActual);
             avanzarChar();
             StringBuilder lexema = new StringBuilder();
-            while ((caracterActual = obtenerPosicionCaracter())
-                != '\0' && caracterActual != '"') { //si no termina en " es como si no parara
-                lexema.append(caracterActual);
-                avanzarChar();
-    }
-// Agregar el token de cadena al ArrayList
+            boolean cadenaCerrada = false;//boolean para saber si es o no cerrada
+            while ((caracterActual = obtenerPosicionCaracter()) != '\0') {
+                if (caracterActual == '"') {
+            cadenaCerrada = true;
+            break; // Romper el bucle al encontrar la comilla de cierre
+            }
+            lexema.append(caracterActual);
+            avanzarChar();
+            }
+                if(cadenaCerrada==true){
+        //cerrro correctamente
 tokens.add(new Token(lexema2 + lexema.toString() + lexema2, "Cadena", filaActual, columnaActual - lexema2.length()));
-               avanzarChar();
+avanzarChar();
+                }else{
+        // Agregar el token de cadena sin cierre al ArrayList como error
+            tokens.clear();
+tokenError.add(new Token(lexema2 + lexema.toString(), "ERROR", filaActual, columnaActual - lexema2.length()));
             
+            return tokenError;
+                }
         //identifica si es una letra 
         }else if(Character.isLetter(caracterActual)){
             String lexema = obtenerLexemas(); //metodo para identificar si es lexema o no
@@ -394,9 +408,11 @@ avanzarChar();
                 if(caracterActual == '<'){
                 avanzarChar();
                 avanzarChar();
+                regresarLinea();
                 System.out.println("hola"); 
                 String lexema2 = Character.toString(caracterActual);
                 retroceder();
+                
                 caracterActual = obtenerPosicionCaracter();
                     if(caracterActual == '='){
                         String lexema = Character.toString(caracterActual);
@@ -475,16 +491,20 @@ avanzarChar();
         //especial para que se pueda reconocer
         }else if(caracterActual ==' '){
             String lexema = Character.toString(caracterActual);
-            System.out.println("ERROR \n ERROR");
 avanzarChar();
-
+        }else if(caracterActual=='\n' || caracterActual=='\r'){
+            String lexema = Character.toString(caracterActual);
+avanzarChar();
         //se sigue manejando errores
         }else{
+            tokens.clear();
             String lexema = Character.toString(caracterActual);
 tokenError.add(new Token(lexema, "ERROR", filaActual, columnaActual-lexema.length()+1));
-avanzarChar();    
-//return tokenError;
-            
+avanzarChar();
+System.out.println("Son errores de caracteres no en el alfabeto");
+
+return tokenError;
+
         }
         
 
