@@ -4,20 +4,23 @@
  */
 package visual;
 
+import graficas.graficas;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
-import graficas.graficos;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Scanner;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author denil
  */
 public class interfazUsuario extends javax.swing.JFrame {
-graf hacerGraficas = new graf();
+graficas graficas = new graficas();
 lexico lexico = new lexico(); //llamar a la parte del lexico
 
 
@@ -42,32 +45,25 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
 
         Fondo = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        archivo = new javax.swing.JButton();
         grafic = new javax.swing.JButton();
         help = new javax.swing.JButton();
         acerca = new javax.swing.JButton();
         analizador = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         cambia = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setLocationByPlatform(true);
-        setMaximumSize(new java.awt.Dimension(1101, 750));
+        setMaximumSize(new java.awt.Dimension(1100, 750));
         setMinimumSize(new java.awt.Dimension(1101, 750));
         setType(java.awt.Window.Type.POPUP);
 
         Fondo.setBackground(new java.awt.Color(255, 255, 255));
         Fondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-
-        archivo.setText("Archivo");
-        archivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                archivoActionPerformed(evt);
-            }
-        });
+        jPanel1.setBackground(new java.awt.Color(0, 51, 51));
 
         grafic.setText("Generar Grafica");
+        grafic.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         grafic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 graficActionPerformed(evt);
@@ -75,15 +71,30 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
         });
 
         help.setText("Ayuda");
+        help.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        help.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpActionPerformed(evt);
+            }
+        });
 
         acerca.setText("Acerca De");
+        acerca.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        acerca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acercaActionPerformed(evt);
+            }
+        });
 
         analizador.setText("Escritura");
+        analizador.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         analizador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 analizadorActionPerformed(evt);
             }
         });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ided.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -93,30 +104,35 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
                 .addGap(4, 4, 4)
                 .addComponent(analizador)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(archivo)
-                .addGap(18, 18, 18)
                 .addComponent(grafic)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(help)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(acerca)
-                .addContainerGap(527, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 672, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 21, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(archivo)
-                    .addComponent(grafic)
-                    .addComponent(help)
-                    .addComponent(acerca)
-                    .addComponent(analizador)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(grafic)
+                            .addComponent(help)
+                            .addComponent(acerca)
+                            .addComponent(analizador)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 9, Short.MAX_VALUE))))
         );
 
         Fondo.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 50));
 
-        cambia.setBackground(new java.awt.Color(204, 255, 255));
+        cambia.setBackground(new java.awt.Color(204, 204, 204));
 
         javax.swing.GroupLayout cambiaLayout = new javax.swing.GroupLayout(cambia);
         cambia.setLayout(cambiaLayout);
@@ -149,52 +165,50 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
      //analizador  //se llama al analizador lexico
         lexico lexico = new lexico();
         seleccionPanel(lexico);
-                      
+              
     }//GEN-LAST:event_analizadorActionPerformed
 
     private void graficActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graficActionPerformed
         // TODO add your handling code here:
-        seleccionPanel(hacerGraficas);
+        seleccionPanel(graficas);
     }//GEN-LAST:event_graficActionPerformed
 
-    private void archivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoActionPerformed
+    private void acercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acercaActionPerformed
+        // Informacion
+        JOptionPane.showMessageDialog(null, "Este IDE fue hecho por \n"
+                + "Erikson Denilson Orozco Monterroso \n"
+                + "202131770 Lenguajes Formales");
+        
+        
+    }//GEN-LAST:event_acercaActionPerformed
+
+    private void helpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpActionPerformed
         // TODO add your handling code here:
-        //archivo para abrir
-        lexico lexi = new lexico();
-        if(seleccionar.showDialog(null, "Abrir")==JFileChooser.APPROVE_OPTION){
-            archivos=seleccionar.getSelectedFile();
-            if(archivos.canRead()){
-                 if(archivo.getName().endsWith("txt")){
-                     String documento=abrirArchivo(archivos);
-                     
-                 }
-            }
-            
-        }
-        
-        
-    }//GEN-LAST:event_archivoActionPerformed
+        JOptionPane.showMessageDialog(null, "Enlace de manuales");
+    }//GEN-LAST:event_helpActionPerformed
 
-       JFileChooser seleccionar = new JFileChooser();
-       File archivos;
-       FileInputStream entrada;
-       FileOutputStream salida;
 
-   public String abrirArchivo(File archivos){
-         String documento = "";
+       /*public void lecturaArch(){
          
-         try {
-           entrada = new FileInputStream(archivos);
-           int doc;
-           
-           while((doc=entrada.read())!= -1){
-               char caracter = (char)doc;
-               documento+=caracter;
+           try {
+               File archivo = new File("Datos.txt");
+               Scanner datos = new Scanner(archivo);
+               StringBuilder escribe = new StringBuilder();
+               
+               while(datos.hasNextLine()){
+                   escribe.append(datos.nextLine()).append("\n");
+                   System.out.println("entra");
+                   System.out.println(escribe.toString());
+                   lexico.lex.setText(escribe.toString());
+               }
+               datos.close();
+               
+           } catch (Exception e) {
+               System.out.println("Hola no se pudo");
+               e.printStackTrace();
            }
-       } catch (Exception e) {
        }
-       return documento;
-   }
+   */
    
    
      private void seleccionPanel(JPanel selec){ // que se realice el cambio del jpanel
@@ -245,10 +259,10 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
     private javax.swing.JPanel Fondo;
     private javax.swing.JButton acerca;
     private javax.swing.JButton analizador;
-    private javax.swing.JButton archivo;
     private javax.swing.JPanel cambia;
     private javax.swing.JButton grafic;
     private javax.swing.JButton help;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

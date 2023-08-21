@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package visual;
+package graficas;
 
+import visual.*;
 import graficas.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * @author denil
  */
-public class graf extends javax.swing.JPanel {
+public class graficas extends javax.swing.JPanel {
 lexico lexico = new lexico();
 
 
@@ -25,16 +26,20 @@ private final String[] palabrasClave = {
     /**
      * Creates new form graficos
      */
-    public graf() {
+    public graficas() {
         initComponents();
-        
-        for (String claves : palabrasClave){
-            clav.addItem(claves);
-        
-    }
+        llamada();
+     
     
     }
   
+    
+    public void llamada(){
+           for (String claves : palabrasClave){
+            clav.addItem(claves);
+        
+    }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -45,34 +50,48 @@ private final String[] palabrasClave = {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        clav1 = new javax.swing.JComboBox<>();
         clav = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jComboBox3 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        pepe = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(1100, 700));
         setPreferredSize(new java.awt.Dimension(1100, 700));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        clav1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        clav1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clav1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(clav1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 190, 80));
+
         clav.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        clav.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clavActionPerformed(evt);
+            }
+        });
         jPanel1.add(clav, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 80));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
-        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 190, 60));
-
-        jPanel1.add(jComboBox3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 190, 70));
-
-        jButton1.setText("jButton1");
+        jButton1.setText("Generar Gráfica");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 0, -1, -1));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 40, 340, -1));
+
+        pepe.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jPanel1.add(pepe, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 40, 340, 50));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        jLabel1.setText("PROXIMAMAENTE");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, 650, 260));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -91,13 +110,26 @@ private final String[] palabrasClave = {
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void clavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clavActionPerformed
+        // TODO add your handling code here:
+        int opciones = clav.getSelectedIndex();
+        String opcionClave = clav.getSelectedItem().toString();
+        
+        pepe.setText(String.valueOf(opcionClave));
+        
+    }//GEN-LAST:event_clavActionPerformed
+
+    private void clav1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clav1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_clav1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> clav;
+    private javax.swing.JComboBox<String> clav1;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField pepe;
     // End of variables declaration//GEN-END:variables
 }
