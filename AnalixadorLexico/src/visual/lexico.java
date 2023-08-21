@@ -4,6 +4,7 @@
  */
 package visual;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,7 +67,7 @@ public class lexico extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        run = new javax.swing.JButton();
         scrollLex = new javax.swing.JScrollPane();
         lex = new javax.swing.JTextPane();
         scrollLexemas = new javax.swing.JScrollPane();
@@ -74,49 +75,56 @@ public class lexico extends javax.swing.JPanel {
         scrollErrores = new javax.swing.JScrollPane();
         errores = new javax.swing.JTextArea();
         jButton3 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        refresh = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton.png"))); // NOI18N
-        jButton1.setText("Run");
-        jButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        run.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton.png"))); // NOI18N
+        run.setText("Run");
+        run.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        run.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        run.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                runActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 0, 100, 50));
+        jPanel1.add(run, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 10, 100, 50));
 
         scrollLex.setForeground(new java.awt.Color(204, 204, 204));
 
-        lex.setBackground(new java.awt.Color(255, 255, 255));
+        lex.setBackground(new java.awt.Color(153, 153, 153));
         lex.setFont(new java.awt.Font("Yu Gothic UI", 0, 22)); // NOI18N
         lex.setForeground(new java.awt.Color(0, 0, 0));
         lex.setCaretColor(new java.awt.Color(0, 0, 102));
-        lex.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        lex.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lex.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         lex.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                lexKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 lexKeyReleased(evt);
             }
         });
         scrollLex.setViewportView(lex);
 
-        jPanel1.add(scrollLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 1050, 420));
+        jPanel1.add(scrollLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 1060, 420));
 
         lexemas.setEditable(false);
+        lexemas.setBackground(new java.awt.Color(153, 153, 153));
         lexemas.setColumns(20);
+        lexemas.setForeground(new java.awt.Color(0, 0, 0));
         lexemas.setRows(5);
         lexemas.setText("\n\n\n\n");
         scrollLexemas.setViewportView(lexemas);
 
-        jPanel1.add(scrollLexemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 480, 610, 210));
+        jPanel1.add(scrollLexemas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 510, 630, 180));
 
         errores.setEditable(false);
+        errores.setBackground(new java.awt.Color(153, 153, 153));
         errores.setColumns(20);
+        errores.setForeground(new java.awt.Color(255, 255, 255));
         errores.setRows(5);
         errores.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -125,9 +133,10 @@ public class lexico extends javax.swing.JPanel {
         });
         scrollErrores.setViewportView(errores);
 
-        jPanel1.add(scrollErrores, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 510, 420, 150));
+        jPanel1.add(scrollErrores, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 520, 420, 150));
 
         jButton3.setText("Abrir Archivo");
+        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -135,13 +144,14 @@ public class lexico extends javax.swing.JPanel {
         });
         jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        jButton2.setText("refresh");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/refres.png"))); // NOI18N
+        refresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        refresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                refreshActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 0, -1, -1));
+        jPanel1.add(refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 40, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -155,7 +165,7 @@ public class lexico extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 //boton para correr el codigo en el jtextArea
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void runActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runActionPerformed
         // TODO add your handling code here:
         //recibe todos los datos y los manda a analizar 
        
@@ -163,7 +173,7 @@ public class lexico extends javax.swing.JPanel {
         guardar();
         
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_runActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -195,10 +205,20 @@ public class lexico extends javax.swing.JPanel {
         errores();
     }//GEN-LAST:event_erroresKeyReleased
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
         // TODO add your handling code here:
         lex.setText("");
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_refreshActionPerformed
+
+    private void lexKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lexKeyPressed
+        // Boton run en donde se escribe
+        if(evt.getKeyCode() == KeyEvent.VK_F6){
+            run.doClick();
+        }
+         if(evt.getKeyCode()==KeyEvent.VK_F1){
+            refresh.doClick();
+        }
+    }//GEN-LAST:event_lexKeyPressed
    public void validez(){
     String codigoEscrito = lex.getText();
         analizadorLexico analiza = new analizadorLexico(codigoEscrito);
@@ -324,8 +344,7 @@ private AttributeSet obtenerEstilo(String tipoToken) {
     final StyleContext contenido = StyleContext.getDefaultStyleContext();
     
         if("Identificador".equals(tipoToken)){
-        return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
-        
+        return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, Color.WHITE);
         }else if("Aritmetico".equals(tipoToken) || "Comparación".equals(tipoToken)
             || "Logicos".equals(tipoToken) || "Asignacion".equals(tipoToken)){
             return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, new Color(0, 170, 228));
@@ -335,7 +354,9 @@ private AttributeSet obtenerEstilo(String tipoToken) {
             || "Cadena".equals(tipoToken)){
             return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, Color.RED);
         }else if("Comentario".equals(tipoToken)){
-            return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, new Color(145, 145, 145));
+            return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, new Color(207,207,207));
+        }else if("Comentario Simple".equals(tipoToken)){
+            return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, Color.WHITE);
         }else if("Otros".equals(tipoToken)){
             return contenido.addAttribute(contenido.getEmptySet(), StyleConstants.Foreground, Color.GREEN);
         }else if("ERROR".equals(tipoToken)){
@@ -353,12 +374,12 @@ private AttributeSet obtenerEstilo(String tipoToken) {
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea errores;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel1;
     public javax.swing.JTextPane lex;
     private javax.swing.JTextArea lexemas;
+    private javax.swing.JButton refresh;
+    private javax.swing.JButton run;
     private javax.swing.JScrollPane scrollErrores;
     private javax.swing.JScrollPane scrollLex;
     private javax.swing.JScrollPane scrollLexemas;

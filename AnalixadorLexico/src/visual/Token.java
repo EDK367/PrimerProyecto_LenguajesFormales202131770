@@ -15,12 +15,14 @@ public class Token {
     private String tipoToken;//que tipo de token es
     private int fila;//fila en la que se encontro
     private int columna;//columna en la que se encontro
+    private String patron;
     //constructores
-    public Token(String lexema, String tipoToken, int fila, int columna) {
+    public Token(String lexema, String tipoToken, int fila, int columna, String patron) {
         this.lexema = lexema;
         this.tipoToken = tipoToken;
         this.fila = fila;
         this.columna = columna;
+        this.patron = patron;
     }
 //get de los metodos
     public String getLexema() {
@@ -38,11 +40,15 @@ public class Token {
     public int getColumna() {
         return columna;
     }
+     public String getPatron() {
+        return patron;
+    }
     
     @Override
     //este apartado es el que se mostrar en el texto de los lexemas
     public String toString(){
-        return "Token: "+lexema+". Tipo de Token: "+tipoToken+". Fila: "
+
+        return "Tipo de Token: "+tipoToken+". Patron: "+patron+". Token: "+lexema+". Fila: "
                 +fila+" Columna: "+columna+".";
     }
 
