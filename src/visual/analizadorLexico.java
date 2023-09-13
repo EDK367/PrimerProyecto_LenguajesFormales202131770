@@ -13,11 +13,14 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+
 /**
  *
  * @author denil
  */
 public class analizadorLexico {
+    
+    
     private String recorreCodigo;//recorre lo que se escribio en le JTextPane
     private int posicion;//posicion de lo que se escribio
     private int filaActual;//identifica la fila
@@ -29,7 +32,7 @@ public class analizadorLexico {
         this.filaActual = 1;
         this.columnaActual = 1;
     }
-    
+    private final String[] variable = {"var"};
     private final String[] salto = {" \n"};
     private final String[] identificadorEsp={"_"};
     //identificador especial el cual servira para poder usar el guion bajo
@@ -49,8 +52,12 @@ public class analizadorLexico {
     };
     private final String[] booleanas = {"True","False"};        
     //verdadero y falso
-    private final String[] otros = {"(",")","{","}","[","]",",",";",":"};
+    private final String[] otros = {"(",")","{","}","[","]",",",";",":","."};
     //parentesis,llaves,corchetes,coma,punto y coma,dos puntos
+
+   
+
+
     
     
     //obtiene la posicion de lo escrito hasta el tamaño del codigo si ya no hay se detiene
@@ -74,15 +81,16 @@ public class analizadorLexico {
         char caracterActual = obtenerPosicionCaracter();
         posicion--;
         columnaActual--;
-        if(caracterActual == '\n'){
-            saltoLinea();
-        }
+        
     }//final de avanzar
     //hace el salto de linea para seguir leyendo
     private void saltoLinea(){
         filaActual++;
-        columnaActual=0;
+        columnaActual=1;
     }//final de salto de linea
+    private void lineas(){
+        filaActual++;
+    }
    private void regresarLinea(){
         filaActual--;
         columnaActual++;
@@ -149,8 +157,15 @@ public class analizadorLexico {
     }
     
 //lectura de los arreglos para saber de que tipo es 
-    
-    
+    //varibles
+     private boolean esVar(String lexema){
+             for (String var : variable){
+                 if(lexema.equals(var)){
+                     return true;
+                 }
+            }       
+             return false;
+        }
         
         //caracteres artimeticos
         private boolean esAritmeticos(String lexema){
@@ -250,7 +265,7 @@ public class analizadorLexico {
     public List<Token> analizadorLexico(){
       List<Token> tokens = new ArrayList<>();//array en donde se guarda todo lo necesario
       List<Token> tokenError= new ArrayList<>();//array de tokens no reconocidos por el sistema
-      List<Token> tok = new ArrayList<>();
+
       char caracterActual;
       
     while((caracterActual = obtenerPosicionCaracter()) != '\0'){
@@ -315,10 +330,10 @@ tokens.add(new Token(lexema2 + lexema.toString() + lexema2, "Cadena", filaActual
 avanzarChar();
                 }else{
         // Agregar el token de cadena sin cierre al ArrayList como error
-            tokens.clear();
-tokenError.add(new Token(lexema2 + lexema.toString(), "ERROR", filaActual, columnaActual - lexema2.length(),"ERROR"));
-            
-            return tokenError;
+      
+tokens.add(new Token("Error", "ERROR", filaActual, columnaActual - lexema2.length(),"ERROR"));
+            avanzarChar();
+ 
                 }
         //identifica si es una letra 
         }else if(Character.isLetter(caracterActual)){
@@ -327,7 +342,11 @@ tokenError.add(new Token(lexema2 + lexema.toString(), "ERROR", filaActual, colum
              if(sonBooleanas(lexema)){
 tokens.add(new Token(lexema, "Booleana", filaActual, columnaActual-lexema.length(),lexema)); 
                 System.out.println("hola aca entra");
-
+            //si es una variable 
+            }else if(esVar(lexema)){
+               tokens.add(new Token(lexema, "Variable", filaActual, columnaActual-lexema.length(),lexema)); 
+                System.out.println("Variable"); 
+                
             //si es un metodo logico
             }else if(esLogicos(lexema)){
 tokens.add(new Token(lexema, "Logicos", filaActual, columnaActual-lexema.length(),lexema)); 
@@ -337,10 +356,10 @@ tokens.add(new Token(lexema, "Logicos", filaActual, columnaActual-lexema.length(
             //las palabras reservadas o claves como def
             }else if(sonPalabrasClaves(lexema)){
 tokens.add(new Token(lexema, "Palabra reservada", filaActual, columnaActual-lexema.length(),lexema)); 
-                System.out.println("si entra");               
+System.out.println("si entra");
             //si no es ninguna de estas sera conocido como identificador
             }else{
-tokens.add(new Token(lexema, "Identificador", filaActual, columnaActual-lexema.length()+1,"([\\w]|_)+(\\w|\\d)*"));
+tokens.add(new Token(lexema, "Identificador", filaActual, columnaActual-lexema.length(),"([\\w]|_)+(\\w|\\d)*"));
             }
              //cadena simple
              }else if(caracterActual =='\''){
@@ -362,10 +381,10 @@ tokens.add(new Token(lexema2 + lexema.toString() + lexema2, "Cadena Simple", fil
 avanzarChar();
                 }else{
         // Agregar el token de cadena sin cierre al ArrayList como error
-            tokens.clear();
-tokenError.add(new Token(lexema2 + lexema.toString(), "ERROR", filaActual, columnaActual - lexema2.length(),"ERROR"));
             
-            return tokenError;
+tokens.add(new Token(lexema2 + lexema.toString(), "ERROR", filaActual, columnaActual - lexema2.length(),"ERROR"));
+            
+
                 }
         //identifica si es una letra 
         }else if(Character.isLetter(caracterActual)){
@@ -384,7 +403,7 @@ tokens.add(new Token(lexema, "Palabra reservada", filaActual, columnaActual-lexe
                 System.out.println("si entra");               
             //si no es ninguna de estas sera conocido como identificador
             }else{
-tokens.add(new Token(lexema, "Identificador", filaActual, columnaActual-lexema.length()+1,"([\\w]|_)+(\\w|\\d)*"));
+tokens.add(new Token(lexema, "Identificador", filaActual, columnaActual-lexema.length(),"([\\w]|_)+(\\w|\\d)*"));
             }
              //caracteres numero
              //si son numeros tanto enteros como decimales
@@ -392,10 +411,10 @@ tokens.add(new Token(lexema, "Identificador", filaActual, columnaActual-lexema.l
             String lexema = obtenerNumero();
             //numero entero
              if(Entero(lexema)){
-tokens.add(new Token(lexema, "Numero entero", filaActual, columnaActual-lexema.length(),lexema));
+tokens.add(new Token(lexema, "Numero entero", filaActual, columnaActual-lexema.length(),"([0-9])*"));
             //numero decimal
             }else{
-tokens.add(new Token(lexema, "Numero decimal", filaActual, columnaActual-lexema.length(),lexema));
+tokens.add(new Token(lexema, "Numero decimal", filaActual, columnaActual-lexema.length(),"([0-9])*[.]([0-9])+"));
             }//fin de la busqueda de numero
              
             //valores no letras ni numeros
@@ -449,7 +468,7 @@ avanzarChar();
                 if(caracterActual == '<'){
                 avanzarChar();
                 avanzarChar();
-                regresarLinea();
+                
                 System.out.println("hola"); 
                 String lexema2 = Character.toString(caracterActual);
                 retroceder();
@@ -479,7 +498,6 @@ tokens.add(new Token(lexema2, "Comparación", filaActual, columnaActual-lexema2.
                  
                }
            }
-        
             //aca verifica asignacion
         }else if(esAsignacion(Character.toString(caracterActual))){
             if(caracterActual == '='){
@@ -538,13 +556,13 @@ avanzarChar();
 avanzarChar();
         //se sigue manejando errores
         }else{
-            tokens.clear();
+          
             String lexema = Character.toString(caracterActual);
-tokenError.add(new Token(lexema, "ERROR", filaActual, columnaActual-lexema.length()+1,lexema));
+tokens.add(new Token(lexema, "ERROR", filaActual, columnaActual-lexema.length()+1,lexema));
 avanzarChar();
 System.out.println("Son errores de caracteres no en el alfabeto");
 
-return tokenError;
+
 
         }
         

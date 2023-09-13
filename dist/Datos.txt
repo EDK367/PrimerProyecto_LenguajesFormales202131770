@@ -1,12 +1,21 @@
-def if "cadena " : ( 4 + 5 )
-mi_id_
-#comentario 
-while
-for
->=
-<
-'cadena en comillas simples'
+if(a = b <%String hola = "Hola Mundo desde Java";%>
+        <%=hola %>)
+|
+12
+1
+3
+2
+|
 
-#un error se puede presentar como la siguiente linea
+|
+|
+2
 
-" mi cadena que no cierra"
+546
+70
+¿!#{
+´+´*¨x
+
+¨+´++
+´
+´"´f"
