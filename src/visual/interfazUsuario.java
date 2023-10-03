@@ -53,6 +53,7 @@ lexico lexico = new lexico(); //llamar a la parte del lexico
         cambia = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
         setMaximumSize(new java.awt.Dimension(1100, 750));
         setMinimumSize(new java.awt.Dimension(1101, 750));
         setType(java.awt.Window.Type.POPUP);

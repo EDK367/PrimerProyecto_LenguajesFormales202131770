@@ -4,6 +4,8 @@
  */
 package visual;
 
+import analizadorSintactico.sintactico;
+import analizadorSintactico.sintaticoPrueba;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -20,6 +22,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
@@ -45,7 +48,7 @@ public class lexico extends javax.swing.JPanel {
     FileInputStream entrada;
     FileOutputStream salida;
     TokensVisuales visual = new TokensVisuales();
-
+    
     /**
      * Creates new form lexico
      */
@@ -53,9 +56,9 @@ public class lexico extends javax.swing.JPanel {
 
         initComponents();
         //validez();
-        numeroLinea = new NumeroLinea(lex);
+        numeroLinea = new NumeroLinea(codigo);
         scrollLex.setRowHeaderView(numeroLinea);
-        numeroLinea = new NumeroLinea(sintactico);
+        numeroLinea = new NumeroLinea(codSintactico);
         sintaticoScroll.setRowHeaderView(numeroLinea);
 
         /*   lex.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -77,12 +80,12 @@ public class lexico extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         run = new javax.swing.JButton();
         scrollLex = new javax.swing.JScrollPane();
-        lex = new javax.swing.JTextPane();
+        codigo = new javax.swing.JTextPane();
         jButton3 = new javax.swing.JButton();
         refresh = new javax.swing.JButton();
         analizador = new javax.swing.JButton();
         sintaticoScroll = new javax.swing.JScrollPane();
-        sintactico = new javax.swing.JTextPane();
+        codSintactico = new javax.swing.JTextPane();
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -100,21 +103,21 @@ public class lexico extends javax.swing.JPanel {
 
         scrollLex.setForeground(new java.awt.Color(204, 204, 204));
 
-        lex.setBackground(new java.awt.Color(153, 153, 153));
-        lex.setFont(new java.awt.Font("Yu Gothic UI", 0, 22)); // NOI18N
-        lex.setForeground(new java.awt.Color(0, 0, 0));
-        lex.setCaretColor(new java.awt.Color(0, 0, 102));
-        lex.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        lex.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        lex.addKeyListener(new java.awt.event.KeyAdapter() {
+        codigo.setBackground(new java.awt.Color(153, 153, 153));
+        codigo.setFont(new java.awt.Font("Yu Gothic UI", 0, 22)); // NOI18N
+        codigo.setForeground(new java.awt.Color(0, 0, 0));
+        codigo.setCaretColor(new java.awt.Color(0, 0, 102));
+        codigo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        codigo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                lexKeyPressed(evt);
+                codigoKeyPressed(evt);
             }
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                lexKeyReleased(evt);
+                codigoKeyReleased(evt);
             }
         });
-        scrollLex.setViewportView(lex);
+        scrollLex.setViewportView(codigo);
 
         jPanel1.add(scrollLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 1070, 380));
 
@@ -144,8 +147,8 @@ public class lexico extends javax.swing.JPanel {
         });
         jPanel1.add(analizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 40, -1, -1));
 
-        sintactico.setBackground(new java.awt.Color(153, 153, 153));
-        sintaticoScroll.setViewportView(sintactico);
+        codSintactico.setBackground(new java.awt.Color(153, 153, 153));
+        sintaticoScroll.setViewportView(codSintactico);
 
         jPanel1.add(sintaticoScroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 460, 1070, 200));
 
@@ -164,7 +167,13 @@ public class lexico extends javax.swing.JPanel {
     private void runActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runActionPerformed
         // TODO add your handling code here:
         //recibe todos los datos y los manda a analizar 
-        
+        String codigoRecorrido = codigo.getText();
+        analizadorLexico lexico = new analizadorLexico(codigoRecorrido);
+        List<Token> tokens = lexico.analizadorLexico();
+        sintactico sintac = new sintactico(tokens);
+        //sintac.analizar();
+        sintaticoPrueba si = new sintaticoPrueba(tokens);
+        si.buscar();
         guardar();
         colorearTexto();
         visual.dispose();
@@ -182,7 +191,7 @@ public class lexico extends javax.swing.JPanel {
                 if (archivos.getName().endsWith("txt")) {
                     String documento = abrirArchivo(archivos);
 
-                    lex.setText(documento);
+                    codigo.setText(documento);
                 } else {
                     JOptionPane.showMessageDialog(null, "Archivo no encontrado");
                 }
@@ -192,18 +201,18 @@ public class lexico extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void lexKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lexKeyReleased
+    private void codigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyReleased
         // TODO add your handling code here:
         // validez();
-    }//GEN-LAST:event_lexKeyReleased
+    }//GEN-LAST:event_codigoKeyReleased
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
         // TODO add your handling code here:
         limpiar();
-        lex.setText("");
+        codigo.setText("");
     }//GEN-LAST:event_refreshActionPerformed
 
-    private void lexKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lexKeyPressed
+    private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
         // Boton run en donde se escribe
         colorearTexto();
         if (evt.getKeyCode() == KeyEvent.VK_F6) {
@@ -215,7 +224,7 @@ public class lexico extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_F5) {
             analizador.doClick();
         }
-    }//GEN-LAST:event_lexKeyPressed
+    }//GEN-LAST:event_codigoKeyPressed
 
     public void limpiar() {
         TokensVisuales limpio = new TokensVisuales();
@@ -226,7 +235,7 @@ public class lexico extends javax.swing.JPanel {
     //identificador esto funcionara como prueba por si funciona o no     
     private void identificadores() {
         limpiar();
-        String codigoEscrito = lex.getText();
+        String codigoEscrito = codigo.getText();
         analizadorLexico analiza = new analizadorLexico(codigoEscrito);
         List<Token> tokens = analiza.analizadorLexico();
 
@@ -256,7 +265,7 @@ public class lexico extends javax.swing.JPanel {
     public void validarTOkens() {
         TokensVisuales visualToken = new TokensVisuales();
         visualToken.setVisible(true);
-        String codigoEscrito = lex.getText();
+        String codigoEscrito = codigo.getText();
 
         analizadorLexico analiza = new analizadorLexico(codigoEscrito);
         List<Token> tokens = analiza.analizadorLexico();
@@ -309,7 +318,7 @@ public class lexico extends javax.swing.JPanel {
             }
 
             FileWriter escribir = new FileWriter(lectura, true);
-            escribir.write(lex.getText());
+            escribir.write(codigo.getText());
             escribir.close();
         } catch (Exception e) {
             System.out.println("ERROR en todo");
@@ -319,10 +328,10 @@ public class lexico extends javax.swing.JPanel {
     private void colorearTexto() {
         final StyleContext contenido = StyleContext.getDefaultStyleContext();//stilo del texto por default
 
-        String escrituraDeCodigo = lex.getText();
+        String escrituraDeCodigo = codigo.getText();
         analizadorLexico lexico = new analizadorLexico(escrituraDeCodigo);
         List<Token> tokens = lexico.analizadorLexico();
-        StyledDocument documento = lex.getStyledDocument(); //documento del jTextPane
+        StyledDocument documento = codigo.getStyledDocument(); //documento del jTextPane
         String textoDocumento;
         try {
             textoDocumento = documento.getText(0, documento.getLength());
@@ -372,19 +381,17 @@ public class lexico extends javax.swing.JPanel {
 
     }
 
-   
-   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton analizador;
+    private javax.swing.JTextPane codSintactico;
+    public javax.swing.JTextPane codigo;
     private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel1;
-    public javax.swing.JTextPane lex;
     private javax.swing.JButton refresh;
     private javax.swing.JButton run;
     private javax.swing.JScrollPane scrollLex;
-    private javax.swing.JTextPane sintactico;
     private javax.swing.JScrollPane sintaticoScroll;
     // End of variables declaration//GEN-END:variables
 }
