@@ -4,7 +4,7 @@
  */
 package visual;
 
-import analizadorSintactico.sintactico;
+import analizadorSintactico.Estructura;
 import analizadorSintactico.sintaticoPrueba;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -48,7 +49,7 @@ public class lexico extends javax.swing.JPanel {
     FileInputStream entrada;
     FileOutputStream salida;
     TokensVisuales visual = new TokensVisuales();
-    
+    int number = 0;
     /**
      * Creates new form lexico
      */
@@ -86,6 +87,7 @@ public class lexico extends javax.swing.JPanel {
         analizador = new javax.swing.JButton();
         sintaticoScroll = new javax.swing.JScrollPane();
         codSintactico = new javax.swing.JTextPane();
+        sin = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -152,6 +154,14 @@ public class lexico extends javax.swing.JPanel {
 
         jPanel1.add(sintaticoScroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 460, 1070, 200));
 
+        sin.setText("Sintactico");
+        sin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sinActionPerformed(evt);
+            }
+        });
+        jPanel1.add(sin, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 40, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -170,13 +180,12 @@ public class lexico extends javax.swing.JPanel {
         String codigoRecorrido = codigo.getText();
         analizadorLexico lexico = new analizadorLexico(codigoRecorrido);
         List<Token> tokens = lexico.analizadorLexico();
-        sintactico sintac = new sintactico(tokens);
-        //sintac.analizar();
         sintaticoPrueba si = new sintaticoPrueba(tokens);
         si.buscar();
         guardar();
         colorearTexto();
         visual.dispose();
+       // hola();
 
 
     }//GEN-LAST:event_runActionPerformed
@@ -224,6 +233,9 @@ public class lexico extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_F5) {
             analizador.doClick();
         }
+        if (evt.getKeyCode() == KeyEvent.VK_F7){
+            sin.doClick();
+        }
     }//GEN-LAST:event_codigoKeyPressed
 
     public void limpiar() {
@@ -261,7 +273,34 @@ public class lexico extends javax.swing.JPanel {
 
 
     }//GEN-LAST:event_analizadorActionPerformed
-    //valida los tokens y los envia tokensVisuales para poder clasificarlos a gusto
+
+    private void sinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sinActionPerformed
+        String codigoRecorrido = codigo.getText();
+        analizadorLexico lexico = new analizadorLexico(codigoRecorrido);
+        List<Token> tokens = lexico.analizadorLexico();
+        sintaticoPrueba sin = new sintaticoPrueba(tokens);
+        List<Estructura> estructura = sin.buscar();
+        codSintactico.setText("");
+        for (Estructura estructuraHecha : estructura) {
+     
+        appendToPane(codSintactico, estructuraHecha + "\n");
+    
+
+        }
+    }//GEN-LAST:event_sinActionPerformed
+
+
+public void appendToPane(JTextPane tp, String msg){
+    Document doc = tp.getDocument();
+    try {
+        doc.insertString(doc.getLength(), msg, null);
+    } catch(BadLocationException e) {
+        e.printStackTrace();
+    }
+}    
+
+
+//valida los tokens y los envia tokensVisuales para poder clasificarlos a gusto
     public void validarTOkens() {
         TokensVisuales visualToken = new TokensVisuales();
         visualToken.setVisible(true);
@@ -380,7 +419,7 @@ public class lexico extends javax.swing.JPanel {
         }
 
     }
-
+   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -392,6 +431,7 @@ public class lexico extends javax.swing.JPanel {
     private javax.swing.JButton refresh;
     private javax.swing.JButton run;
     private javax.swing.JScrollPane scrollLex;
+    private javax.swing.JButton sin;
     private javax.swing.JScrollPane sintaticoScroll;
     // End of variables declaration//GEN-END:variables
 }

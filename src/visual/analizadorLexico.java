@@ -41,7 +41,7 @@ public class analizadorLexico {
     private final String[] asignacion = {"=","+=","-=","/=","//=","%=","*="};
     //asignacion, con operadores aritmeticos
     private final String[] palabrasClave = {
-    "as","assert","break","class","continue","def","def","del","elif",
+    "as","print","assert","break","class","continue","def","def","del","elif",
     "else","except","False","finally","for","from","global","if","import","in",
     "is","lamda","None","nonlocal","pass","raise","return","True",
     "try","while","with","yield"    
@@ -260,7 +260,7 @@ public class analizadorLexico {
         //analizador lexico, aca se empezara analizar los datos
     public List<Token> analizadorLexico(){
       List<Token> tokens = new ArrayList<>();//array en donde se guarda todo lo necesario
-      List<Token> tokenError= new ArrayList<>();//array de tokens no reconocidos por el sistema
+   
 
       char caracterActual;
       
