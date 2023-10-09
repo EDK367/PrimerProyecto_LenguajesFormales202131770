@@ -43,7 +43,7 @@ public class analizadorLexico {
     private final String[] palabrasClave = {
     "as","print","assert","break","class","continue","def","def","del","elif",
     "else","except","False","finally","for","from","global","if","import","in",
-    "is","lamda","None","nonlocal","pass","raise","return","True",
+    "is","lamda","None","nonlocal","pass","raise","range","return","True",
     "try","while","with","yield"    
     };
     private final String[] booleanas = {"True","False"};        
@@ -87,7 +87,7 @@ public class analizadorLexico {
     private void lineas(){
         filaActual++;
     }
-   private void regresarLinea(){
+    private void regresarLinea(){
         filaActual--;
         columnaActual++;
     }

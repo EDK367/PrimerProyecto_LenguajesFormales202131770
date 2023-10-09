@@ -12,13 +12,15 @@ public class Estructura {
     private String expresion;
     private String bloque;
     private String validacion;
+    private String error;
     private int fila;
     private int columna;
 
-    public Estructura(String expresion, String bloque, String validacion, int fila, int columna) {
+    public Estructura(String expresion, String bloque, String validacion, String error, int fila, int columna) {
         this.expresion = expresion;
         this.bloque = bloque;
         this.validacion = validacion;
+        this.error = error;
         this.fila = fila;
         this.columna = columna;
     }
@@ -34,6 +36,11 @@ public class Estructura {
     public String getValidacion(){
         return validacion;
     }
+    
+    public String getError(){
+        return error;
+    }
+    
     public int getFila() {
         return fila;
     }
@@ -47,7 +54,7 @@ public class Estructura {
     @Override
     public String toString() {
         return "Estructura: " + expresion + " Nombre del Bloque: " + bloque + " " 
-                + validacion + " Fila: "+ fila + " Columna: " + columna ;
+                + validacion + ":"+ error + " Fila: "+ fila + " Columna: " + columna ;
     }
 
    

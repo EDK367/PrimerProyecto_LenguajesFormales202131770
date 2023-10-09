@@ -1,2 +1,1397 @@
-def hk ():
- gf
+def suma(x, y):
+    return x + y
+
+def resta(x, y):
+    return x - y
+
+def multiplicacion(x, y):
+    return x * y
+
+def division(x, y):
+    if y == 0:
+        return "Error: DivisiÃ³n por cero"
+    return x / y
+
+def main():
+    while True:
+        print("Opciones:")
+        print("1. Sumar")
+        print("2. Restar")
+        print("3. Multiplicar")
+        print("4. Dividir")
+        print("5. Salir")
+        
+        eleccion = input("Selecciona una opciÃ³n (1/2/3/4/5): ")
+
+        if eleccion == '5':
+            print("Â¡Hasta luego!")
+            break
+
+        num1 = float(input("Introduce el primer nÃºmero: "))
+        num2 = float(input("Introduce el segundo nÃºmero: "))
+
+        if eleccion == '1':
+            print("Resultado: ", suma(num1, num2))
+        elif eleccion == '2':
+            print("Resultado: ", resta(num1, num2))
+        elif eleccion == '3':
+            print("Resultado: ", multiplicacion(num1, num2))
+        elif eleccion == '4':
+            print("Resultado: ", division(num1, num2))
+        else:
+            print("OpciÃ³n no vÃ¡lida")
+
+if __name__ == "__main__":
+    main()
+
+
+# ###########################################
+
+import random
+
+numero_aleatorio = random ID
+print(f"El nÃºmero aleatorio generado es: {numero_aleatorio}")
+
+
+# ########################################
+
+
+# Sample Board where: 
+# 0 = Empty tile
+# 1 = Coin
+# 2 = Enemy
+# 3 = Goal
+board = [[0, 0, 1],
+         [0, 2, 0],
+         [1, 0, 3]]
+
+
+
+# juego 1
+
+
+import os
+import time
+
+# Inicializamos el tablero como una lista de espacios vacÃ­os
+board = [' ' for x in range(10)]
+
+# FunciÃ³n para insertar una 'X' o 'O' en una posiciÃ³n especÃ­fica
+def insertLetter(letter, pos):
+    board[pos] = letter
+
+# Verifica si el espacio en la posiciÃ³n especificada estÃ¡ libre
+def isSpaceFree(pos):
+    return board[pos] == ' '
+
+
+def printBoard():
+    os.system('clear')  # Limpia la pantalla
+    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('---|---|---')
+    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('---|---|---')
+    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+
+# Verifica si el jugador ha ganado
+def isWinner(bo, le):
+    return (bo[1] == le and bo[2] == le and bo[3] == le) or \
+           (bo[4] == le and bo[5] == le and bo[6] == le) or \
+           (bo[7] == le and bo[8] == le and bo[9] == le) or \
+           (bo[1] == le and bo[4] == le and bo[7] == le) or \
+           (bo[2] == le and bo[5] == le and bo[8] == le) or \
+           (bo[3] == le and bo[6] == le and bo[9] == le) or \
+           (bo[1] == le and bo[5] == le and bo[9] == le) or \
+           (bo[3] == le and bo[5] == le and bo[7] == le)
+
+
+def playerMove():
+    run = True
+    while run:
+        move = input('Por favor selecciona una posiciÃ³n para la X (1-9): ')
+        try:
+            move = int(move)
+            if move > 0 and move < 10:
+                if isSpaceFree(move):
+                    run = False
+                    insertLetter('X', move)
+                else:
+                    print('Lo siento, este espacio estÃ¡ ocupado!')
+            else:
+                print('Por favor ingresa un nÃºmero entre 1 y 9')
+        except:
+            print('Por favor ingresa un nÃºmero')
+
+def computerMove():
+    possibleMoves = [x for x, letter in enumerate(board) if letter == ' ' and x != 0]
+    move = 0
+
+    for let in ['O', 'X']:
+        for i in possibleMoves:
+            boardCopy = board[:]
+            boardCopy[i] = let
+            if isWinner(boardCopy, let):
+                move = i
+                return move
+
+    cornersOpen = []
+    for i in possibleMoves:
+        if i in [1, 3, 7, 9]:
+            cornersOpen.append(i)
+    if len(cornersOpen) > 0:
+        move = selectRandom(cornersOpen)
+        return move
+
+    if 5 in possibleMoves:
+        move = 5
+        return move
+
+    edgesOpen = []
+    for i in possibleMoves:
+        if i in [2, 4, 6, 8]:
+            edgesOpen.append(i)
+    if len(edgesOpen) > 0:
+        move = selectRandom(edgesOpen)
+        return move
+
+def selectRandom(li):
+    import random
+    ln = len(li)
+    r = random.randrange(0, ln)
+    return li[r]
+
+def main():
+    print('Â¡Bienvenido a Tic Tac Toe!')
+    printBoard()
+
+    while not(isBoardFull(board)):
+        if not(isWinner(board, 'O')):
+            playerMove()
+            printBoard()
+        else:
+            print('Â¡Lo siento, O ha ganado esta vez!')
+            return
+
+        if not(isWinner(board, 'X')):
+            move = computerMove()
+            if move == 0:
+                print('Â¡Empate!')
+            else:
+                insertLetter('O', move)
+                print('La computadora colocÃ³ una O en la posiciÃ³n', move, ':')
+                printBoard()
+        else:
+            print('Â¡X ha ganado, bien hecho!')
+            return
+
+    if isBoardFull(board):
+        print('Â¡Empate!')
+
+def isBoardFull(board):
+    if board.count(' ') > 1:
+        return False
+    else:
+        return True
+
+if __name__ == "__main__":
+    main()
+
+
+
+#juego 2
+
+
+wind = turtle.Screen()
+wind.title("Snake Mazeð")
+wind.bgcolor("red")
+
+
+wind.setup(width=600, height=600)
+
+snake = turtle.Turtle()
+snake.shape("square")
+snake.color("black")
+snake.penup()
+snake.goto(0, 0)
+snake.direction = "Stop"
+
+snake_food = turtle.Turtle()
+shapes = random.choice('triangle','circle')
+snake_food.shape(shapes)
+snake_food.color("blue")
+snake_food.speed(0)
+snake_food.penup()
+snake_food.goto(0, 100)
+
+pen = turtle.Turtle()
+pen.speed(0)
+pen.shape('square')
+pen.color('white')
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 250)
+pen.write("Your_score: 0 Highest_Score : 0", align="center", 
+font=("Arial", 24, "normal"))
+turtle.mainloop()
+
+
+# Assigning directions
+def moveleft():
+    if snake.direction != "right":
+        snake.direction = "left"
+
+def moveright():
+    if snake.direction != "left":
+        snake.direction = "right"
+
+def moveup():
+    if snake.direction != "down":
+        snake.direction = "up"
+
+def movedown():
+    if snake.direction != "up":
+        snake.direction = "down"
+
+def move():
+    if snake.direction == "up":
+        coord_y = snake.ycor()
+        snake.sety(coord_y+20)
+
+    if snake.direction == "down":
+        coord_y = snake.ycor()
+        snake.sety(coord_y-20)
+
+    if snake.direction == "right":
+        coord_x = snake.xcor()
+        snake.setx(coord_x+20)
+
+    if snake.direction == "left":
+        coord_x = snake.xcor()
+        snake.setx(coord_x-20)
+
+wind.listen()
+wind.onkeypress(moveleft, 'L')
+wind.onkeypress(moveright, 'R')
+wind.onkeypress(moveup, 'U')
+wind.onkeypress(movedown, 'D')
+
+segments = []
+
+#Implementing the gameplay
+while True:
+    wind.update()
+    if snake.xcor() > 290 or snake.xcor() < -290 or snake.ycor() > 290 or snake.ycor() < -290:
+        time.sleep(1)
+        snake.goto(0, 0)
+        snake.direction = "Stop"
+        snake.shape("square")
+        snake.color("green")
+
+        for segment in segments:
+            segment.goto(1000, 1000)
+            segments.clear()
+            player_score = 0
+            delay_time = 0.1
+            pen.clear()
+            pen.write("Player's_score: {} Highest_score: {}".format(player_score, highest_score), align="center", font=("Arial", 24, "normal"))
+
+        if snake.distance(snake_food) < 20:
+            coord_x = random.randint(-270, 270)
+            coord_y = random.randint(-270, 270)
+            snake_food.goto(coord_x, coord_y)
+
+            # Adding segment
+            added_segment = turtle.Turtle()
+            added_segment.speed(0)
+            added_segment.shape("square")
+            added_segment.color("white")
+            added_segment.penup()
+            segments.append(added_segment)
+            delay_time -= 0.001
+            player_score += 5
+
+            if player_score > highest_score:
+                highest_score = player_score
+                pen.clear()
+                pen.write("Player's_score: {} Highest_score: {}".format(player_score, highest_score), align="center", font=("Arial", 24, "normal"))
+
+    # checking for collisions
+    for i in range(len(segments)-1, 0, -1):
+        coord_x = segments[i-1].xcor()
+        coord_y = segments[i-1].ycor()
+        segments[i].goto(coord_x, coord_y)
+
+    if len(segments) > 0:
+        coord_x = snake.xcor()
+        coord_y = snake.ycor()
+        segments[0].goto(coord_x, coord_y)
+    move()
+
+    for segment in segments:
+        if segment.distance(snake) < 20:
+            time.sleep(1)
+            snake.goto(0, 0)
+            snake.direction = "stop"
+            snake.color('white')
+            snake.shape('square')
+
+            for segment in segments:
+                segment.goto(1000, 1000)
+                segment.clear()
+                player_score = 0
+                delay_time = 0.1
+                pen.clear()
+                pen.write("Player's_score: {} Highest_score: {}".format(player_score, highest_score), align="center", font=("Arial", 24, "normal"))
+
+     time.sleep(delay_time)
+
+turtle.mainloop()
+
+
+# juego 3
+
+import random
+
+
+class NumberGuessingGame:
+
+    def __init__(self):
+        ## define the range
+        self.LOWER = 1
+        self.HIGHER = 100
+
+    ## method to generate the random number
+    def get_random_number(self):
+        return random.randint(self.LOWER, self.HIGHER)
+
+    ## game start method
+    def start(self):
+        ## generating the random number
+        random_number = self.get_random_number()
+
+        print(
+            f"Guess the randomly generated number from {self.LOWER} to {self.HIGHER}")
+
+        ## heart of the game
+        chances = 0
+        while True:
+            user_number = int(input("Enter the guessed number: "))
+            if user_number == random_number:
+                print(
+                    f"-> Hurray! You got it in {chances + 1} step{'s' if chances > 1 else ''}!")
+                break
+            elif user_number < random_number:
+                print("-> Your number is less than the random number")
+            else:
+                print("-> Your number is greater than the random number")
+            chances += 1
+
+
+numberGuessingGame = NumberGuessingGame()
+numberGuessingGame.start()
+
+# juego 4
+
+import pygame
+pygame.init()
+ventana = pygame.display.set_mode((640,480))
+pygame.display.set_caption("Ejemplo 3")
+ball = pygame.image.load("ball.png")
+ballrect = ball.get_rect()
+speed = [4,4]
+ballrect.move_ip(0,0)
+# Crea el objeto bate, y obtengo su rectÃ¡ngulo
+bate = pygame.image.load("bate.png")
+baterect = bate.get_rect()
+# Pongo el bate en la parte inferior de la pantalla
+baterect.move_ip(240,450)
+jugando = True
+while jugando:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            jugando = False
+    # Compruebo si se ha pulsado alguna tecla
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        baterect = baterect.move(-3,0)
+    if keys[pygame.K_RIGHT]:
+        baterect = baterect.move(3,0)
+    # Compruebo si hay colisiÃ³n
+    if baterect.colliderect(ballrect):
+        speed[1] = -speed[1]
+ 
+    ballrect = ballrect.move(speed)
+    if ballrect.left < 0 or ballrect.right > ventana.get_width():
+        speed[0] = -speed[0]
+    if ballrect.top < 0 or ballrect.bottom > ventana.get_height():
+        speed[1] = -speed[1]
+    ventana.fill((252, 243, 207))
+    ventana.blit(ball, ballrect)
+    # Dibujo el bate
+    ventana.blit(bate, baterect)
+    pygame.display.flip()
+    pygame.time.Clock().tick(60)
+pygame.quit()
+
+
+# juego 5
+
+from random import choice
+from turtle import *
+
+from freegames import floor, vector
+
+state = {'score': 0}
+path = Turtle(visible=False)
+writer = Turtle(visible=False)
+aim = vector(5, 0)
+pacman = vector(-40, -80)
+ghosts = [
+    [vector(-180, 160), vector(5, 0)],
+    [vector(-180, -160), vector(0, 5)],
+    [vector(100, 160), vector(0, -5)],
+    [vector(100, -160), vector(-5, 0)],
+]
+# fmt: off
+tiles = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0,
+    0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+]
+# fmt: on
+
+
+def square(x, y):
+    """Draw square using path at (x, y)."""
+    path.up()
+    path.goto(x, y)
+    path.down()
+    path.begin_fill()
+
+    for count in range(4):
+        path.forward(20)
+        path.left(90)
+
+    path.end_fill()
+
+
+def offset(point):
+    """Return offset of point in tiles."""
+    x = (floor(point.x, 20) + 200) / 20
+    y = (180 - floor(point.y, 20)) / 20
+    index = int(x + y * 20)
+    return index
+
+
+def valid(point):
+    """Return True if point is valid in tiles."""
+    index = offset(point)
+
+    if tiles[index] == 0:
+        return False
+
+    index = offset(point + 19)
+
+    if tiles[index] == 0:
+        return False
+
+    return point.x % 20 == 0 or point.y % 20 == 0
+
+
+def world():
+    """Draw world using path."""
+    bgcolor('black')
+    path.color('blue')
+
+    for index in range(len(tiles)):
+        tile = tiles[index]
+
+        if tile > 0:
+            x = (index % 20) * 20 - 200
+            y = 180 - (index // 20) * 20
+            square(x, y)
+
+            if tile == 1:
+                path.up()
+                path.goto(x + 10, y + 10)
+                path.dot(2, 'white')
+
+
+def move():
+    """Move pacman and all ghosts."""
+    writer.undo()
+    writer.write(state['score'])
+
+    clear()
+
+    if valid(pacman + aim):
+        pacman.move(aim)
+
+    index = offset(pacman)
+
+    if tiles[index] == 1:
+        tiles[index] = 2
+        state['score'] += 1
+        x = (index % 20) * 20 - 200
+        y = 180 - (index // 20) * 20
+        square(x, y)
+
+    up()
+    goto(pacman.x + 10, pacman.y + 10)
+    dot(20, 'yellow')
+
+    for point, course in ghosts:
+        if valid(point + course):
+            point.move(course)
+        else:
+            options = [
+                vector(5, 0),
+                vector(-5, 0),
+                vector(0, 5),
+                vector(0, -5),
+            ]
+            plan = choice(options)
+            course.x = plan.x
+            course.y = plan.y
+
+        up()
+        goto(point.x + 10, point.y + 10)
+        dot(20, 'red')
+
+    update()
+
+    for point, course in ghosts:
+        if abs(pacman - point) < 20:
+            return
+
+    ontimer(move, 100)
+
+
+def change(x, y):
+    """Change pacman aim if valid."""
+    if valid(pacman + vector(x, y)):
+        aim.x = x
+        aim.y = y
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+writer.goto(160, 160)
+writer.color('white')
+writer.write(state['score'])
+listen()
+onkey(lambda: change(5, 0), 'Right')
+onkey(lambda: change(-5, 0), 'Left')
+onkey(lambda: change(0, 5), 'Up')
+onkey(lambda: change(0, -5), 'Down')
+world()
+move()
+done()
+
+# juego6 cannon
+
+from random import randrange
+from turtle import *
+
+from freegames import vector
+
+ball = vector(-200, -200)
+speed = vector(0, 0)
+targets = []
+
+
+def tap(x, y):
+    """Respond to screen tap."""
+    if not inside(ball):
+        ball.x = -199
+        ball.y = -199
+        speed.x = (x + 200) / 25
+        speed.y = (y + 200) / 25
+
+
+def inside(xy):
+    """Return True if xy within screen."""
+    return -200 < xy.x < 200 and -200 < xy.y < 200
+
+
+def draw():
+    """Draw ball and targets."""
+    clear()
+
+    for target in targets:
+        goto(target.x, target.y)
+        dot(20, 'blue')
+
+    if inside(ball):
+        goto(ball.x, ball.y)
+        dot(6, 'red')
+
+    update()
+
+
+def move():
+    """Move ball and targets."""
+    if randrange(40) == 0:
+        y = randrange(-150, 150)
+        target = vector(200, y)
+        targets.append(target)
+
+    for target in targets:
+        target.x -= 0.5
+
+    if inside(ball):
+        speed.y -= 0.35
+        ball.move(speed)
+
+    dupe = targets.copy()
+    targets.clear()
+
+    for target in dupe:
+        if abs(target - ball) > 13:
+            targets.append(target)
+
+    draw()
+
+    for target in targets:
+        if not inside(target):
+            return
+
+    ontimer(move, 50)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+up()
+tracer(False)
+onscreenclick(tap)
+move()
+done()
+
+# juego 7 connectados
+from turtle import *
+
+from freegames import line
+
+turns = {'red': 'yellow', 'yellow': 'red'}
+state = {'player': 'yellow', 'rows': [0] * 8}
+
+
+def grid():
+    """Draw Connect Four grid."""
+    bgcolor('light blue')
+
+    for x in range(-150, 200, 50):
+        line(x, -200, x, 200)
+
+    for x in range(-175, 200, 50):
+        for y in range(-175, 200, 50):
+            up()
+            goto(x, y)
+            dot(40, 'white')
+
+    update()
+
+
+def tap(x, y):
+    """Draw red or yellow circle in tapped row."""
+    player = state['player']
+    rows = state['rows']
+
+    row = int((x + 200) // 50)
+    count = rows[row]
+
+    x = ((x + 200) // 50) * 50 - 200 + 25
+    y = count * 50 - 200 + 25
+
+    up()
+    goto(x, y)
+    dot(40, player)
+    update()
+
+    rows[row] = count + 1
+    state['player'] = turns[player]
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+grid()
+onscreenclick(tap)
+done()
+
+# juego8 flapy
+from random import *
+from turtle import *
+
+from freegames import vector
+
+bird = vector(0, 0)
+balls = []
+
+
+def tap(x, y):
+    """Move bird up in response to screen tap."""
+    up = vector(0, 30)
+    bird.move(up)
+
+
+def inside(point):
+    """Return True if point on screen."""
+    return -200 < point.x < 200 and -200 < point.y < 200
+
+
+def draw(alive):
+    """Draw screen objects."""
+    clear()
+
+    goto(bird.x, bird.y)
+
+    if alive:
+        dot(10, 'green')
+    else:
+        dot(10, 'red')
+
+    for ball in balls:
+        goto(ball.x, ball.y)
+        dot(20, 'black')
+
+    update()
+
+
+def move():
+    """Update object positions."""
+    bird.y -= 5
+
+    for ball in balls:
+        ball.x -= 3
+
+    if randrange(10) == 0:
+        y = randrange(-199, 199)
+        ball = vector(199, y)
+        balls.append(ball)
+
+    while len(balls) > 0 and not inside(balls[0]):
+        balls.pop(0)
+
+    if not inside(bird):
+        draw(False)
+        return
+
+    for ball in balls:
+        if abs(ball - bird) < 15:
+            draw(False)
+            return
+
+    draw(True)
+    ontimer(move, 50)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+up()
+tracer(False)
+onscreenclick(tap)
+move()
+done()
+
+#juego 9 
+from random import *
+from turtle import *
+
+from freegames import path
+
+car = path('car.gif')
+tiles = list(range(32)) * 2
+state = {'mark': None}
+hide = [True] * 64
+
+
+def square(x, y):
+    """Draw white square with black outline at (x, y)."""
+    up()
+    goto(x, y)
+    down()
+    color('black', 'white')
+    begin_fill()
+    for count in range(4):
+        forward(50)
+        left(90)
+    end_fill()
+
+
+def index(x, y):
+    """Convert (x, y) coordinates to tiles index."""
+    return int((x + 200) // 50 + ((y + 200) // 50) * 8)
+
+
+def xy(count):
+    """Convert tiles count to (x, y) coordinates."""
+    return (count % 8) * 50 - 200, (count // 8) * 50 - 200
+
+
+def tap(x, y):
+    """Update mark and hidden tiles based on tap."""
+    spot = index(x, y)
+    mark = state['mark']
+
+    if mark is None or mark == spot or tiles[mark] != tiles[spot]:
+        state['mark'] = spot
+    else:
+        hide[spot] = False
+        hide[mark] = False
+        state['mark'] = None
+
+
+def draw():
+    """Draw image and tiles."""
+    clear()
+    goto(0, 0)
+    shape(car)
+    stamp()
+
+    for count in range(64):
+        if hide[count]:
+            x, y = xy(count)
+            square(x, y)
+
+    mark = state['mark']
+
+    if mark is not None and hide[mark]:
+        x, y = xy(mark)
+        up()
+        goto(x + 2, y)
+        color('black')
+        write(tiles[mark], font=('Arial', 30, 'normal'))
+
+    update()
+    ontimer(draw, 100)
+
+
+shuffle(tiles)
+setup(420, 420, 370, 0)
+addshape(car)
+hideturtle()
+tracer(False)
+onscreenclick(tap)
+draw()
+done()
+
+#juego 9 pong
+
+from random import choice, random
+from turtle import *
+
+from freegames import vector
+
+
+def value():
+    """Randomly generate value between (-5, -3) or (3, 5)."""
+    return (3 + random() * 2) * choice([1, -1])
+
+
+ball = vector(0, 0)
+aim = vector(value(), value())
+state = {1: 0, 2: 0}
+
+
+def move(player, change):
+    """Move player position by change."""
+    state[player] += change
+
+
+def rectangle(x, y, width, height):
+    """Draw rectangle at (x, y) with given width and height."""
+    up()
+    goto(x, y)
+    down()
+    begin_fill()
+    for count in range(2):
+        forward(width)
+        left(90)
+        forward(height)
+        left(90)
+    end_fill()
+
+
+def draw():
+    """Draw game and move pong ball."""
+    clear()
+    rectangle(-200, state[1], 10, 50)
+    rectangle(190, state[2], 10, 50)
+
+    ball.move(aim)
+    x = ball.x
+    y = ball.y
+
+    up()
+    goto(x, y)
+    dot(10)
+    update()
+
+    if y < -200 or y > 200:
+        aim.y = -aim.y
+
+    if x < -185:
+        low = state[1]
+        high = state[1] + 50
+
+        if low <= y <= high:
+            aim.x = -aim.x
+        else:
+            return
+
+    if x > 185:
+        low = state[2]
+        high = state[2] + 50
+
+        if low <= y <= high:
+            aim.x = -aim.x
+        else:
+            return
+
+    ontimer(draw, 50)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+listen()
+onkey(lambda: move(1, 20), 'w')
+onkey(lambda: move(1, -20), 's')
+onkey(lambda: move(2, 20), 'i')
+onkey(lambda: move(2, -20), 'k')
+draw()
+done()
+
+
+# juego 10 simon says
+
+
+from random import choice
+from time import sleep
+from turtle import *
+
+from freegames import floor, square, vector
+
+pattern = []
+guesses = []
+tiles = {
+    vector(0, 0): ('red', 'dark red'),
+    vector(0, -200): ('blue', 'dark blue'),
+    vector(-200, 0): ('green', 'dark green'),
+    vector(-200, -200): ('yellow', 'khaki'),
+}
+
+
+def grid():
+    """Draw grid of tiles."""
+    square(0, 0, 200, 'dark red')
+    square(0, -200, 200, 'dark blue')
+    square(-200, 0, 200, 'dark green')
+    square(-200, -200, 200, 'khaki')
+    update()
+
+
+def flash(tile):
+    """Flash tile in grid."""
+    glow, dark = tiles[tile]
+    square(tile.x, tile.y, 200, glow)
+    update()
+    sleep(0.5)
+    square(tile.x, tile.y, 200, dark)
+    update()
+    sleep(0.5)
+
+
+def grow():
+    """Grow pattern and flash tiles."""
+    tile = choice(list(tiles))
+    pattern.append(tile)
+
+    for tile in pattern:
+        flash(tile)
+
+    print('Pattern length:', len(pattern))
+    guesses.clear()
+
+
+def tap(x, y):
+    """Respond to screen tap."""
+    onscreenclick(None)
+    x = floor(x, 200)
+    y = floor(y, 200)
+    tile = vector(x, y)
+    index = len(guesses)
+
+    if tile != pattern[index]:
+        exit()
+
+    guesses.append(tile)
+    flash(tile)
+
+    if len(guesses) == len(pattern):
+        grow()
+
+    onscreenclick(tap)
+
+
+def start(x, y):
+    """Start game."""
+    grow()
+    onscreenclick(tap)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+grid()
+onscreenclick(start)
+done()
+
+# juego 11  tiles
+from random import *
+from turtle import *
+
+from freegames import floor, vector
+
+tiles = {}
+neighbors = [
+    vector(100, 0),
+    vector(-100, 0),
+    vector(0, 100),
+    vector(0, -100),
+]
+
+
+def load():
+    """Load tiles and scramble."""
+    count = 1
+
+    for y in range(-200, 200, 100):
+        for x in range(-200, 200, 100):
+            mark = vector(x, y)
+            tiles[mark] = count
+            count += 1
+
+    tiles[mark] = None
+
+    for count in range(1000):
+        neighbor = choice(neighbors)
+        spot = mark + neighbor
+
+        if spot in tiles:
+            number = tiles[spot]
+            tiles[spot] = None
+            tiles[mark] = number
+            mark = spot
+
+
+def square(mark, number):
+    """Draw white square with black outline and number."""
+    up()
+    goto(mark.x, mark.y)
+    down()
+
+    color('black', 'white')
+    begin_fill()
+    for count in range(4):
+        forward(99)
+        left(90)
+    end_fill()
+
+    if number is None:
+        return
+    elif number < 10:
+        forward(20)
+
+    write(number, font=('Arial', 60, 'normal'))
+
+
+def tap(x, y):
+    """Swap tile and empty square."""
+    x = floor(x, 100)
+    y = floor(y, 100)
+    mark = vector(x, y)
+
+    for neighbor in neighbors:
+        spot = mark + neighbor
+
+        if spot in tiles and tiles[spot] is None:
+            number = tiles[mark]
+            tiles[spot] = number
+            square(spot, number)
+            tiles[mark] = None
+            square(mark, None)
+
+
+def draw():
+    """Draw all tiles."""
+    for mark in tiles:
+        square(mark, tiles[mark])
+    update()
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+load()
+draw()
+onscreenclick(tap)
+done()
+
+
+# juego 12 maze
+
+from random import random
+from turtle import *
+
+from freegames import line
+
+
+def draw():
+    """Draw maze."""
+    color('black')
+    width(5)
+
+    for x in range(-200, 200, 40):
+        for y in range(-200, 200, 40):
+            if random() > 0.5:
+                line(x, y, x + 40, y + 40)
+            else:
+                line(x, y + 40, x + 40, y)
+
+    update()
+
+
+def tap(x, y):
+    """Draw line and dot for screen tap."""
+    if abs(x) > 198 or abs(y) > 198:
+        up()
+    else:
+        down()
+
+    width(2)
+    color('red')
+    goto(x, y)
+    dot(4)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+draw()
+onscreenclick(tap)
+done()
+
+# juego 13 tecleando
+
+from random import choice, randrange
+from string import ascii_lowercase
+from turtle import *
+
+from freegames import vector
+
+targets = []
+letters = []
+score = 0
+
+
+def inside(point):
+    """Return True if point on screen."""
+    return -200 < point.x < 200 and -200 < point.y < 200
+
+
+def draw():
+    """Draw letters."""
+    clear()
+
+    for target, letter in zip(targets, letters):
+        goto(target.x, target.y)
+        write(letter, align='center', font=('Consolas', 20, 'normal'))
+
+    update()
+
+
+def move():
+    """Move letters."""
+    if randrange(20) == 0:
+        x = randrange(-150, 150)
+        target = vector(x, 200)
+        targets.append(target)
+        letter = choice(ascii_lowercase)
+        letters.append(letter)
+
+    for target in targets:
+        target.y -= 1
+
+    draw()
+
+    for target in targets:
+        if not inside(target):
+            return
+
+    ontimer(move, 100)
+
+
+def press(key):
+    """Press key."""
+    global score
+
+    if key in letters:
+        score += 1
+        pos = letters.index(key)
+        del targets[pos]
+        del letters[pos]
+    else:
+        score -= 1
+
+    print('Score:', score)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+up()
+tracer(False)
+listen()
+for letter in ascii_lowercase:
+    onkey(lambda letter=letter: press(letter), letter)
+move()
+done()
+
+
+# juego 14
+
+from random import randrange, seed
+from turtle import *
+
+from freegames import floor, square
+
+seed(0)
+bombs = {}
+shown = {}
+counts = {}
+
+
+def initialize():
+    """Initialize `bombs`, `counts`, and `shown` grids."""
+    for x in range(-250, 250, 50):
+        for y in range(-250, 250, 50):
+            bombs[x, y] = False
+            shown[x, y] = False
+            counts[x, y] = -1
+
+    for count in range(8):
+        x = randrange(-200, 200, 50)
+        y = randrange(-200, 200, 50)
+        bombs[x, y] = True
+
+    for x in range(-200, 200, 50):
+        for y in range(-200, 200, 50):
+            total = 0
+            for i in (-50, 0, 50):
+                for j in (-50, 0, 50):
+                    total += bombs[x + i, y + j]
+            counts[x, y] = total
+
+
+def stamp(x, y, text):
+    """Display `text` at coordinates `x` and `y`."""
+    square(x, y, 50, 'white')
+    color('black')
+    write(text, font=('Arial', 50, 'normal'))
+
+
+def draw():
+    """Draw the initial board grid."""
+    for x in range(-200, 200, 50):
+        for y in range(-200, 200, 50):
+            stamp(x, y, '?')
+
+
+def end():
+    """Draw the bombs as X's on the grid."""
+    for x in range(-200, 200, 50):
+        for y in range(-200, 200, 50):
+            if bombs[x, y]:
+                stamp(x, y, 'X')
+
+
+def tap(x, y):
+    """Respond to screen click at `x` and `y` coordinates."""
+    x = floor(x, 50)
+    y = floor(y, 50)
+
+    if bombs[x, y]:
+        end()
+        return
+
+    pairs = [(x, y)]
+
+    while pairs:
+        x, y = pairs.pop()
+        stamp(x, y, counts[x, y])
+        shown[x, y] = True
+
+        if counts[x, y] == 0:
+            for i in (-50, 0, 50):
+                for j in (-50, 0, 50):
+                    pair = x + i, y + j
+                    if not shown[pair]:
+                        pairs.append(pair)
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+initialize()
+draw()
+onscreenclick(tap)
+done()
+
+# errores
+
+$   Î´ Î±
+4Î´Ï 
+Â°
+!"2
+2$
+# token /= = dos tokens
+/==
+# comprobar asignacion
+*=
+-=
+== 
+=#
+a < b < c
+
+x = 5
+
+if x > 9:
+    print("Hello!")
+
+print("End")
+
+
+
+
+
+
+

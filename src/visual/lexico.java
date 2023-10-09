@@ -224,7 +224,7 @@ public class lexico extends javax.swing.JPanel {
     private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
         // Boton run en donde se escribe
         colorearTexto();
-        if (evt.getKeyCode() == KeyEvent.VK_F6) {
+        if (evt.getKeyCode() == KeyEvent.VK_F7) {
             run.doClick();
         }
         if (evt.getKeyCode() == KeyEvent.VK_F1) {
@@ -233,9 +233,10 @@ public class lexico extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_F5) {
             analizador.doClick();
         }
-        if (evt.getKeyCode() == KeyEvent.VK_F7){
+        if (evt.getKeyCode() == KeyEvent.VK_F6){
             sin.doClick();
         }
+      
     }//GEN-LAST:event_codigoKeyPressed
 
     public void limpiar() {
@@ -280,7 +281,7 @@ public class lexico extends javax.swing.JPanel {
         List<Token> tokens = lexico.analizadorLexico();
         sintaticoPrueba sin = new sintaticoPrueba(tokens);
         List<Estructura> estructura = sin.buscar();
-        codSintactico.setText("");
+        codSintactico.setText(" ");
         for (Estructura estructuraHecha : estructura) {
      
         appendToPane(codSintactico, estructuraHecha + "\n");
@@ -301,7 +302,7 @@ public void appendToPane(JTextPane tp, String msg){
 
 
 //valida los tokens y los envia tokensVisuales para poder clasificarlos a gusto
-    public void validarTOkens() {
+public void validarTOkens() {
         TokensVisuales visualToken = new TokensVisuales();
         visualToken.setVisible(true);
         String codigoEscrito = codigo.getText();
@@ -323,7 +324,7 @@ public void appendToPane(JTextPane tp, String msg){
         visualToken.getTablaTokens().setModel(modelo);
     }
 
-    public String abrirArchivo(File archivos) {
+public String abrirArchivo(File archivos) {
         String documento = "";
 
         try {
