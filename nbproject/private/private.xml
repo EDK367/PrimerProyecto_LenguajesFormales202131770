@@ -5,8 +5,9 @@
         <group>
             <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/analizadorSintactico/sintaticoPrueba.java</file>
             <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/analizadorSintactico/Estructura.java</file>
+            <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/visualSintactico/SintacticoVisual.java</file>
             <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/visual/lexico.java</file>
-            <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/visual/analizadorLexico.java</file>
+            <file>file:/C:/Users/denil/OneDrive/Escritorio/AnalixadorLexico/src/visualTokens/TokensVisuales.java</file>
         </group>
     </open-files>
 </project-private>

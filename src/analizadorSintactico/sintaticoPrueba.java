@@ -13,20 +13,15 @@ import visual.Token;
  * @author denil
  */
 public class sintaticoPrueba {
-
-    StringBuilder lex = new StringBuilder();
     private List<Token> tokens;
     private int number;
     private int estado;
     private int fila;
     private int columna;
-    boolean mala = false;
     List<Estructura> estrucSintactico = new ArrayList<>();//array para las funciones
-    
-    String expresionVariables = "[Identificador,operador_Asignacion,Expresion]";
-    String expresionInvalida = "No";
-    
-    String expresion_Ternario = "[Variable,if,condicion]";
+    String errorSIn = "Ocurrio Un error Sintactico";
+    String var = "";
+    String name= "";
     public sintaticoPrueba(List<Token> token) {
         this.tokens = token;
         this.number = 0;
@@ -41,9 +36,8 @@ public class sintaticoPrueba {
 
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(i).getTipoToken().equals("Identificador") && tokens.get(i).getColumna() == 1) {
-                fila = tokens.get(i).getFila();
                 number = i;
-                Ternario_Variables(number, fila);
+                Ternario_Variables(number);
             } else if (tokens.get(i).getLexema().equals("if")) {
                 fila = tokens.get(i).getFila();
                 number = i;
@@ -58,181 +52,617 @@ public class sintaticoPrueba {
             } else if (tokens.get(i).getLexema().equals("def")) {
                 number = i;
                 estructuraFunciones(number);
+            }else if (tokens.get(i).getLexema().equals("print")){
+                number = i;
+                impresionFunciones(number);
             }else{
                 
             }
 
         }
-        if (estado == 1) {
-            JOptionPane.showMessageDialog(null, "ERROR EN IDENTIFICADOR IDENTADO");
-        }
+        
         return estrucSintactico;
 
     }
-    
-    
+        
     //ESTRUCTURAS PARA RECONOCER LAS DISTINTAS FUNCIONES
     //EL ESTADO DE ACEPATCION VALIDO ES 22 MIENTRAS QUE EL INVALIDO ES -1 SIENDO EL 0 ESTADO INICIAL
-    //estructura base para reconocer variables o ternarios (Invalido)
-    public List<Estructura> Ternario_Variables(int number, int fila){
-    estado = 0; //estado base donde se comienza
-        for (int i = number; i < tokens.size(); i++) { //estructura for para leer tokesn
-            while(estado != -1 && estado != 22){ //el estado 22 es el estado de aceptacion por lo que se detiene si se llega a este
+    //estructura base para reconocer variables o ternarios y funciones (Valido)
+    public List<Estructura> Ternario_Variables(int number) {
+        estado = 0;//estado inicial
+        for (int i = number; i < tokens.size(); i++) {//bucle para recorrer todos los tokens
+            while(estado != -1 && estado != 22){
                 switch (estado) {
-                    case 0://estado de reconocimiento de identificacion
+                    case 0://estado inicial del automata el cual obtiene los datos necesarios para identificar variables u operadores 
                         if(tokens.get(number).getTipoToken().equals("Identificador")){
-                            columna = tokens.get(number).getColumna();//obtengo la columna del token
+                            var = tokens.get(number).getLexema();
+                            fila = tokens.get(number).getFila();
+                            columna = tokens.get(number).getColumna();
                             estado = 1;
                         }else{
                             estado = -1;
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta un Identificador", fila, columna));//es una variable inocorrecta
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "ERROR Desconocido", fila, columna));
                         }
                         break;
-                    case 1:
-                        if(asignacion()){//se verifica si es un token asignacio
-                            estado = 2;
-                        }else if(coma()){//si es a coma vuelve a verificar si es un identificador 
-                           // System.out.println("se va al esatado 0");
-                            estado = 0;
-                        }else{
-                            estado = -1;
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta un token de Asignacion o un Identificador", fila, columna));
-                        }
-                        break;
-                    case 2:
-                        if(corchetesAbiertos()){//si es un corchete abiero se toma como que fuera un array de lo contrario toma que sera asignacion
-                           estado = 6;
-                        }else{
-                            estado = 3;
-                        }
-                        break;
-                    case 3://verificacion de la variable completa con su asignacion
-                        //System.out.println("esta en el estado 3");
-                        if(asignacionHecha(fila)){
-                            //System.out.println("Se va al estado 4");
-                            estado = 4;
-                        }else if(condicion3(fila)){
-                            estado = 4;
-                        }else{
-                            estado = -1;
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta una Expresion Valida o una Coma", fila, columna));
-                        }
-                        break;
-                    case 4://verificacion si es un acoma vuelve al estado 3 de lo contrario sera tomada como valida
+                    case 1://estado el cual identifica si es una asignacion simple o no
+                        //System.out.println("estado 1");
                         if(coma()){
-                            estado = 3;
+                            estado = 2;
+                        }else if(parentesisAbiertoEspe()){
+                            estado = 36;
+                        }else if(asignacion(fila)){
+                            estado = 4;
                         }else{
-                            estado = 5;
-                        }
-                        break;
-                        
-                        
-                        
-                        //posible errores aca se verifica correctametnne la  estructura
-                    case 5://estado de aceptacion para variables simples o arrays
-                        //System.out.println("ESTADO DE ACEPTACION");
-                        if(IF(fila)){
-                            estado = 11;
-                        }else if(asignacionHecha(fila)){
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta de como o elemento no valido", fila, columna));
                             estado = -1;
-                        }else{
-estrucSintactico.add(new Estructura("Variables", "Variables", "Variable Correcta","", fila, columna));
-                            estado = 22;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una asignacion o una coma", fila, columna));                            
                         }
                         break;
-                    case 6://si se abrio con un corchete se tomara como puede venir o no una asignacion extra
+                    case 2://estado el cual verifica un identificador luego de la coma (asignacion multiple)
+                        //System.out.println("estado 2");
+                        if(identificadorVariables(fila)){
+                            estado = 3; 
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un identificador luego de la coma", fila, columna));                            
+                        }
+                        break;
+                    case 3://estado que vuelve a verificar si es una coma o ya se declara la variable
+                        //System.out.println("estado 3");
+                        if(coma()){
+                            estado = 2;
+                        }else if(asignacion(fila)){
+                           estado = 4; 
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un valor de asignacion", fila, columna));                            
+                        }
+                        break;
+                    case 4://estado el cual identifica asignacion (number,strign,identi,etc) o array o List
+                        //System.out.println("estado 4");
+                        if(llaveAbierta()){
+                            estado = 5;
+                        }else if(corcheteAbiertoEspe()){
+                            estado = 10;
+                        }else{
+                            estado = 14;
+                        }
+                        break;
+                    case 5://estado de array o array List
+                        //System.out.println("estado 5");
+                        if(corcheteAbierto()){
+                            estado = 6;  
+                        }else if(llaveCerradaEspe()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Array", fila, columna));                             
+                        }else if(condicion()){
+                            estado = 51;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una Llave de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 51://estado extra el cual ayuda a saber si hay elementos en el array
+                        if(coma()){
+                            estado = 52;
+                        }else if(llaveCerradaEspe()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Array", fila, columna));                            
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una Llave de cierre", fila, columna));                             
+                        }
+                        break;
+                    case 52://estado extra el cual ayuda a identificar si hay varios elementos en el array
                         if(condicion3(fila)){
-                            //System.out.println("hubo asignacion");
+                            estado = 51;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una condicion luego de la coma", fila, columna));                            
+                        }
+                        break;
+                    case 50://estado especial extra el cual ayuda a conocer elementos de un array List con elemento
+                        //System.out.println("esrtado especial 30");
+                        if(corcheteAbierto()){
+                            estado = 6;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un Corchete luego de la coma", fila, columna));                            
+                        }
+                        break;
+                    case 6://estado el cual identifica un array List con elementos
+                        //System.out.println("estado 6");
+                        if(corcheteCerrado()){
+                            estado = 9;
+                        }else if(condicion()){
                             estado = 7;
                         }else{
-                            estado = 10;//si viene un epsilon se va a verificar si hay un corchete cerrado 
-                        }
-                        break;
-                    case 7://entra en el estado que verifica si hay una coma y verifica un posible error
-                        //System.out.println("el estado = 7");
-                        if(coma()){
-                            //System.out.println("entra en coma");
-                          estado = 8;  
-                        }else if(asignacionHecha(fila)){
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta una coma", fila, columna));
                             estado = -1;
-                        }else{
-                            estado = 10;//si es un epsilon se va a estado de aceptacion
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un Corchete de cierre", fila, columna));                            
                         }
                         break;
-                    case 8://en este estado vuelve a verificar si hay una expresion valida luego de una coma
-                        //System.out.println("estado 8");
-                        if(condicion3(fila)){
+                    case 7://estado para verificar varios elementos de un array List
+                        //System.out.println("estado 7");
+                        if(coma()){
+                            estado = 8;
+                        }else if(dosPuntosEspe()){
+                            estado = 8;
+                        }else if(corcheteCerradoEspe()){
                             estado = 9;
                         }else{
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta una Expresion", fila, columna));
                             estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un Corchete de cierre o no se acepto la coma o dos puntos", fila, columna));
                         }
                         break;
-                    case 9://vuelve a verificar si puede venir otra coma
-                        estado = 7;
-                        break;
-                    case 10://si se encuentra el posible corchete de cierre o es un error
-                        //System.out.println("estado = 10");
-                        if(corchetesCerrados()){
-                             estado = 5;
+                    case 8://estado para encontrar condiciones luego de los dos puntos o coma
+                        //System.out.println("estado 8");
+                        if(condicion3(fila)){
+                            estado = 7;
                         }else{
-estrucSintactico.add(new Estructura("Variables", "Variables", "ERROR Variable","Falta un corchete", fila, columna));
                             estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una condicion luego de la coma", fila, columna));                            
                         }
                         break;
-                    case 11://estado 11 si se encuentra un if por lo que se convierte en un operador ternario
-                        //System.out.println("llega estado 11");
-                           if(isLogic()){
-                               estado = 12;
-                           }else if(condicion()){
-                               estado = 13;
-                           }else{
-                               estado = -1;
-estrucSintactico.add(new Estructura("Ternario", "Ternario", "ERROR Ternario", "Falta Primera Condicion", fila, columna));
-                           }     
+                    case 9://estado para verificar el array List o varios elementos de List
+                        //System.out.println("estado 9 ");
+                        if(coma()){
+                            estado = 50;
+                        }else if(llaveCerradaEspe()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Array Lista", fila, columna));                            
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una Llave de Cierre", fila, columna));                            
+                        }
                         break;
-                    case 12:// si se recibe un token logico el siguiente sera una condicion
-                        //System.out.println("llega estao 12");
-                        if(condicion2()){
+                    case 10://estado para identificar una lista
+                        //System.out.println("estado 10");
+                        if(condicion3(fila)){  
+                            estado = 11;
+                        }else if(corcheteCerradoEspe()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Lista", fila, columna)); 
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un Corchete de Cierre", fila, columna));                            
+                        }
+                        break;
+                    case 11://estado de aceptacion para verificar si la lista esta vacia o no 
+                        //System.out.println("estado 11");
+                        if(corcheteCerrado()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Lista", fila, columna)); 
+                        }else{
+                            estado = 12;                            
+                        }
+                        break;
+                    case 12://estado que encuentra varios elementos de una List
+                        //System.out.println("estado 12");
+                        if(dosPuntosEspe()){
+                            estado = 13;
+                        }else if(comaEspe()){
                             estado = 13;
                         }else{
-                            estado = -1;
-estrucSintactico.add(new Estructura("Ternario", "Ternario", "ERROR Ternario", "Falta Condicion luego de operador Logico", fila, columna));
+                        estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un Corchete de Cierre", fila, columna));                            
                         }
                         break;
-                    case 13: //si se recibe la condicion desde el estado 11 o el estado 12 para recibir el else
-                        //System.out.println("llega al estado 13");
-                        if(elseTernario(fila)){
-                            estado = 14;
+                    case 13://estado para seguir encontrando varios elementos de la list luego de la coma o dos puntos
+                        //System.out.println("estado 13");
+                        if(condicion3(fila)){
+                            estado = 11;
                         }else{
-estrucSintactico.add(new Estructura("Ternario", "Ternario", "ERROR Ternario", "Falta el token Else", fila, columna));
                             estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un condicion luego de la coma o dos puntos", fila, columna));                            
                         }
                         break;
-                    case 14://ultima condicion del operador ternario
-                        //System.out.println("LLega al estado 14");
-                        if(condicion_Ternario(fila)){
-                          estado = 15;  
+                    case 14://estado el cual no es ni un array o una lista por lo que busca otro tipo de valor 
+                        //variable,entero,decimal,booleana,cadena o lo toma como incorrecta
+                        //System.out.println("estado 14");
+                        if(var(fila)){
+                            estado = 15;
+                        }else if(int_(fila)){
+                            estado = 17;
+                        }else if(float_(fila)){
+                            estado = 19;
+                        }else if(booleanas(fila)){
+                            estado = 21;
+                        }else if(Strings_(fila)){
+                            estado = 23;
                         }else{
-estrucSintactico.add(new Estructura("Ternario", "Ternario", "ERROR Ternario", "Falta Condicion Luego del Else", fila, columna));
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una condicion luego de la asignacion", fila, columna));                            
+                        }
+                        break;
+                        //el estado 26  es para poder encontrar el valor de los operadores ternarios
+                    case 15://estado de variable para identificar solo identificadores
+                        //System.out.println("estado 15");
+                        if(coma()){
+                            estado = 16;
+                        }else if(IF_Ternario(fila)){
+                            estado = 26;                           
+                        }else if(condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Variable Mal Asignada", fila, columna));
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Asignada", fila, columna));                            
+                        }
+                        break;
+                    case 16://estado que verifica varias condiciones variables
+                        //System.out.println("estado 16");
+                        if(var_Espe(fila)){
+                            estado = 15;
+                        }else if(identificadorVariables(fila)){
+                            estado = 15;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una Condicion identificador luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 17://estado para verificar solo numeros enteros
+                        if(coma()){
+                            estado = 18;
+                        }else if(IF_Ternario(fila)){
+                            estado = 26;
+                        }else if(condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Variable Mal Asignada", fila, columna));
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Int", fila, columna));                            
+                        }
+                        break;
+                    case 18://estado que verifica varios numeros enteros
+                        if(int_Espe(fila)){
+                            estado = 17;
+                        }else if(identificadorVariables(fila)){
+                            estado = 17;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un numero entero luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 19://estado para verificar numeros decimales
+                        if(coma()){
+                            estado = 20;
+                        }else if(IF_Ternario(fila)){
+                            estado = 26;
+                        }else if(condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Variable Mal Asignada", fila, columna));                                                        
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Float", fila, columna));
+                        }
+                        break;
+                    case 20://estado para verificar si existen varios numeros decimales
+                        if(float_Espe(fila)){
+                            estado = 19;
+                        }else if(identificadorVariables(fila)){
+                            estado = 19;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta un numero decimal luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 21://estado unico el cual solo verifica un valor booleano
+                        if(IF_Ternario(fila)){
+                            estado = 26;
+                        }else if(condicionERROREspe(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Variable Mal Asignada", fila, columna));
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Booleana", fila, columna));
+                        }
+                        break;
+                    case 23://estado para verificar cadenas o cadenas simples
+                        if(coma()){
+                            estado = 24;
+                        }else if(IF_Ternario(fila)){
+                            estado = 26;
+                        }else if(condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Variable Mal Asignada", fila, columna));
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Variable", var, "Variable Valida", "Variable Cadena", fila, columna));
+                        }
+                        break;
+                    case 24://estado para verificar varias cadenas o cadenas simples
+                        if(Strings_Espe(fila)){
+                            estado = 23;
+                        }else if(identificadorVariables(fila)){
+                            estado = 23;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Variable", "Error Variable", "Falta una Cadena luego de la coma", fila, columna));
+                        }
+                        break;
+                        //aca se empieza para valores ternarios
+                    case 26://estado que si se recibe un if luego de una asignacion correcta entra en operadores ternarios
+                        //si es un valor logico o una condicion valida del operador ternario
+                        //System.out.println("estado 26 Ternario");
+                        if(isLogic()){
+                            estado = 27;
+                        }else if(condicion()){
+                            estado = 29;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicon luego del IF", fila, columna));
+                        }
+                        break;
+                    case 27://estado el cual luego de recibir un operador logico emplea una condicion
+                        //System.out.println("estado 27");
+                        if(condicion3(fila)){
+                            estado = 28;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicon luego del operador logico", fila, columna));                            
+                        }
+                        break;
+                    case 28://estado que verifica si hay varios operadores logicos lo correspondiente en java a || o && o si es un else
+                        //System.out.println("estado 28");
+                        if(isLogic()){
+                            estado = 27;
+                        }else if(elseTernario(fila)){
+                            estado = 35;
+                        }else if(elseTernarioEspe(fila)){
+                            estado = 35;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta la palabra else", fila, columna));                            
+                        }
+                        break;
+                    case 29://operador de si recibe una condicion luego del if para asi pasar a un else o una comparativa
+                        //System.out.println("estado 29");
+                        if(asignacionIFS()){
+                            estado = 30;
+                        }else if(elseTernario(fila)){
+                            estado = 35;
+                        }else{
+                            estado = 31;
+                        }
+                        break;
+                    case 30://condicion luego del token que comapara
+                        //System.out.println("estado 30");
+                        if(condicion3(fila)){
+                            estado = 31;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicion de validacion en el If", fila, columna));                            
+                        }
+                        break;
+                    case 31://si son varias condiciones comparativas o ya es un else
+                        //System.out.println("estado 31");
+                        if(EspeLogic()){
+                           estado = 32; 
+                        }else if(elseTernarioEspe(fila)){
+                            estado = 35;
+                        }else if(elseTernario(fila)){
+                            estado = 35;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta la palabra else", fila, columna));                            
+                        }
+                        break;
+                    case 32://estado para seguir verificando mas comparativas luego de un operador logico 
+                        //System.out.println("estado 32");
+                        if(condicion3(fila)){
+                            estado = 33;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicion luego del operador logico", fila, columna));                                                        
+                        }
+                        break;
+                    case 33://estado para hacer una comparativa valor de else
+                        //System.out.println("estado 33");
+                        if(asignacionIFS()){
+                            estado = 34;
+                        }else if(elseTernarioEspe(fila)){
+                            estado = 35;
+                        }else if(elseTernario(fila)){
+                            estado = 35;
+                        }else{
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta la palabra else", fila, columna));                                                                                    
                             estado = -1;
                         }
                         break;
-                    case 15://estado de aceptacion
-                        //System.out.println("llega al estado 15");
-estrucSintactico.add(new Estructura("Ternario", "Ternario", "Ternario Valido", "", fila, columna));
+                    case 34://uultimo estado para verificar una condicion 
+                        //System.out.println("estado 34");
+                        if(condicion3(fila)){
+                            estado = 31;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicion Valida luego de la comparacion", fila, columna));
+                        }
+                        break;
+                    case 35://estado luego de recibir un else por lo que pide una condicion
+                        if(condicion3(fila)){
+                            estado = 25; 
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Operador Ternario", "Error Ternario", "Falta una condicion Valida luego del else", fila, columna));                            
+                        }
+                        break;
+                    case 25://estado de aceptacion para los operadores ternarios
                         estado = 22;
+estrucSintactico.add(new Estructura("Operador Ternario", "Operador Ternario", "Operador Ternario Valido", "", fila, columna));                        
+                        break;
+                        //aca se empieza las llamadas de funciones
+                    case 36:
+                        if(parentesisMal()){
+                            estado = 47;
+                        }else if(condicion()){
+                            estado = 37;
+                        }else{
+                            estado = 101;
+                        }
+                        break;
+                    case 101:
+                        if(corcheteAbierto()){
+                            estado = 42;
+                        }else if(corcheteAbiertoEspe()){
+                            estado = 42;
+                        }else{
+                            estado = 102;
+                        }
+                        break;
+                    case 102:
+                        if(llaveAbierta()){
+                            estado = 39;
+                        }else if(parentesisCerrado()){
+                            estado = 47;
+                        }else{
+                            estado = 103;
+                        }
+                        break;
+                    case 103:
+                        if(condicion()){
+                            estado = 37;
+                        }else if(condicion3(fila)){
+                            estado = 37;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en llamada", "Falta un parentesis de Cierre", fila, columna));                        
+                        }
+                        break;
+                    case 37:
+                        //System.out.println("estado 37");
+                        if(coma()){
+                            estado = 38;
+                        }else if(parentesisCerrado()){
+                            estado = 47;
+                        }else if(parentesisMal()){
+                            estado = 47;
+                        }else{
+                           estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en llamada", "Faltaa un parentesis de Cierre", fila, columna));                        
+                        }
+                        break;
+                    case 38:
+                        //System.out.println("38");
+                        if(condicion3(fila)){
+                            estado = 37;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta un valor de llamada", fila, columna));                            
+                        }
+                        break;
+                    case 39:
+                        //System.out.println("39");
+                        if(condicion3(fila)){
+                            estado = 40;
+                        }else if(llaveCerradaEspe()){
+                            estado = 100;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta una Llave de cierre", fila, columna));    
+                        }
+                        break;
+                    case 100:
+                        //System.out.println("estado 100");
+                        if(parentesisCerrado()){
+                            estado = 47;
+                        }else if(parentesisMal()){
+                            estado = 47;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta un parentesis de Cierre", fila, columna));                            
+                        }
+                        break;
+                    case 40:
+                        //System.out.println("40");
+                        if(coma()){
+                            estado = 41;
+                        }else if(llaveCerradaEspe()){
+                            estado = 100;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta una Llave de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 41:
+                        //System.out.println("41");
+                        if(condicion3(fila)){
+                           estado = 40; 
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta una condicion luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 42:
+                        //System.out.println("42");
+                        if(condicion()){
+                            estado = 43;
+                        }else if(corcheteCerrado()){
+                            estado = 45;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta una Corchete de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 43:
+                        //System.out.println("43");
+                        if(coma()){
+                            estado = 44;
+                        }else if(corcheteCerrado()){
+                            estado = 45;
+                        }else{
+                        estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta un Corchete de Cierre", fila, columna));                            
+                        }
+                        break;
+                    case 44:
+                        //System.out.println("44");
+                        if(condicion3(fila)){
+                            estado = 43;
+                        }else{
+                           estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta una condicion luego de la coma", fila, columna));                            
+                        }
+                        break;
+                    case 45:
+                        //System.out.println("45");
+                        if(coma()){
+                            estado = 46;
+                        }else if(dosPuntos()){
+                            estado = 46;
+                        }else if(dosPuntosEspe()){
+                            estado = 46;
+                        }else if(parentesisCerrado()){
+                            estado = 47;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta un Parentesis de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 46:
+                        //System.out.println("46");
+                        if(corcheteAbierto()){
+                            estado = 40;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Falta un Corchete de avertura luego de la coma", fila, columna));                            
+                        }
+                        break;
+                    case 47:
+                        //System.out.println("47");
+                        if(condicionERRORDoble(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, var, "Error en Llamada de Funcion", "Funcion con llamado erroneo", fila, columna));                            
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Llamada de Funcion", var, "Llamada de Funcion Valida", "", fila, columna));                                      
+                        }
                         break;
                     default:
                         throw new AssertionError();
                 }
-  
             }//fin del while
-        }//fin del error
+        }//fin del for
         return estrucSintactico;
-    }//fin de la funcion de variables y ternarios
+    }//fin del operador ternrio y variables
     
     //estructura base para reconocer if, if-elif, if-elif-else, if-else (Valido)
     public List<Estructura>  estructur_if_elif_else(int number, int fila, int columna){
@@ -246,7 +676,7 @@ estrucSintactico.add(new Estructura("Ternario", "Ternario", "Ternario Valido", "
                           fila = tokens.get(i).getFila();//valor de las condiciones
                           estado = 1;
                         }else{
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","ERROR DESCONOCIDO", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","ERROR DESCONOCIDO", fila, columna));
                             estado = -1;
                         }
                         break;
@@ -259,35 +689,48 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","ERROR DESCONOCIDO", 
                         }else if(isLogic()){//operador logico para la evaluacion
                             estado = 3;
                         }else{
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Falta una condicional o valor Booleano", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Falta una condicional o valor Booleano", fila, columna));
                         estado = -1;
                         }
                         break;
                     case 2://estado 2 que se encargar de evaluar la asiganacion si exite una condicion en lugar de boleana o logico
+                        //System.out.println("estado 2");
                         if(asignacionIFS()){//agrega el valor de asignacion
+                            estado = 3;
+                        }else if(isLogic()){
                             estado = 3;
                         }else if(dosPuntosEspe()){//puede ser un valor boleano por metodo de identificador
                             estado = 15;
+                        }else if(dosPuntos()){
+                            estado = 15;
                         }else{
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Falta una condicion o dos puntos", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Falta una condicion o dos puntos", fila, columna)); 
                             estado = -1;
                         }
                         break;
                     case  3://estado 3 si se encontro una asigancionIFS
+                        //System.out.println("estado 3");
                         if(condicion2()){//si es una condicion valida luego del IFS
                             estado = 4;
+                        }else if(condicion()){
+                            estado = 4;
                         }else{
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Falta un condicional", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Falta un condicional", fila, columna));
                             estado = -1;
                         }
                         break;
                     case 4://estado el cual luego de recibir una condicion valida se encarga de repetir la secuencia o darla por valida
+                        //System.out.println("estado 4");
                         if(dosPuntos()){//estructura if valida solo reconocer bloques o elif y else
                             estado = 15;
+                        }else if(dosPuntosEspe()){
+                            estado = 15;
+                        }else if(asignacion(fila)){
+                            estado = 1;
                         }else if(isLogic()){//es un if con operador logico es decir en java seraia como a || b
                             estado = 1;
                         }else{
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Faltan dos puntos", fila, columna));  
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Faltan dos puntos", fila, columna));  
                             estado = -1;
                         }
                         break;
@@ -323,7 +766,7 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Faltan dos puntos", 
                         //System.out.println("estado 18");
                         if(identacion(columna, number, columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque IF con mala identacion", fila, columna));                            
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque IF con mala identacion", fila, columna));                            
                         }else{
                             estado = 19;
                         }
@@ -332,7 +775,7 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque IF con mala i
                         //System.out.println("estado 19");
                         if(!segundaIdentacion(columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque IF con mala identacion", fila, columna));                            
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque IF con mala identacion", fila, columna));                            
                         }else{
                             //System.out.println("se va para el 15");
                             estado = 15;
@@ -351,7 +794,7 @@ estrucSintactico.add(new Estructura("IF", "IF", "If valido","", fila, columna));
                         }else if(condicion()){
                             estado = 7;
                         }else{
-estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta un condicion Valida", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "IF-Elif", "ERROR If-Elif","Falta un condicion Valida", fila, columna)); 
                             estado = -1;
                         }
                         break;
@@ -361,7 +804,7 @@ estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta
                         }else if(dosPuntosEspe()){
                             estado = 9;
                         }else{
-estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta una condicional o dos puntos", fila, columna));     
+estrucSintactico.add(new Estructura(errorSIn, "IF-Elif", "ERROR If-Elif","Falta una condicional o dos puntos", fila, columna));     
                             estado = -1;
                         }
                         break;
@@ -369,7 +812,7 @@ estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta
                         if(condicion2()){
                             estado = 9;
                         }else{
-estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta una condicional", fila, columna));     
+estrucSintactico.add(new Estructura(errorSIn, "IF-Elif", "ERROR If-Elif","Falta una condicional", fila, columna));     
                             estado = -1;
                         }
                         break;
@@ -378,10 +821,12 @@ estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta
                             estado = 20;
                         }else if(dosPuntos()){
                             estado = 20;
+                        }else if(asignacionIFS()){
+                            estado = 6;
                         }else if(isLogic()){//vuelve a la sentencia para verificar el a || b
                             estado = 6;
                         }else{
-estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Faltan dos Puntos", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "IF-Elif", "ERROR If-Elif","Faltan dos Puntos", fila, columna)); 
                             estado = -1;
                         }
                         break;
@@ -416,10 +861,10 @@ estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "ERROR If-Elif","Falta
                         }
                         break;
                     case 25://bloque para identificar mala identacion
-                       // System.out.println("estado 25");
+                        //System.out.println("estado 25");
                         if(identacion(columna, number, columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Elif con mala identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque Elif con mala identacion", fila, columna));
                         }else{
                             estado = 26;  
                         }
@@ -427,7 +872,7 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Elif con mala
                     case 26://segundo bloque para la mala indentacion
                         if(!segundaIdentacion(columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Elif con mala identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque Elif con mala identacion", fila, columna));
                         }else{
                             estado = 20;
                         }
@@ -438,11 +883,11 @@ estrucSintactico.add(new Estructura("IF-Elif", "IF-Elif", "If-Elif Valido","", f
                             estado = 22;
                         break;
                     case 11://aca llega si es un elif else
-                       // System.out.println("estado 11");
+                        //System.out.println("estado 11");
                         if(dosPuntos()){
                             estado = 27;
                         }else{
-estrucSintactico.add(new Estructura("IF-Elif-Else", "IF-Elif-Else", "ERROR If-Elif-Else","Faltan dos Puntos", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF-Elif-Else", "ERROR If-Elif-Else","Faltan dos Puntos", fila, columna));
                             estado = -1;
                         }
                         break;
@@ -467,7 +912,7 @@ estrucSintactico.add(new Estructura("IF-Elif-Else", "IF-Elif-Else", "ERROR If-El
                         //System.out.println("identacion 29");
                         if(identacion(columna, number, columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque Else con mala identacion", fila, columna));
                         }else{
                             estado = 30;
                         }
@@ -476,7 +921,7 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala
                         //System.out.println("estado 30");
                         if(!segundaIdentacion(columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala identacion", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Bloque Else con mala identacion", fila, columna)); 
                         }else{
                             estado = 27;
                         }
@@ -491,13 +936,13 @@ estrucSintactico.add(new Estructura("IF-Elif-Else", "IF-Elif-Else", "If-Elif-Els
                         if(dosPuntos()){                           
                             estado = 31;
                         }else{
-estrucSintactico.add(new Estructura("IF-Else", "IF-Else", "ERROR If-Else","Faltan dos Puntos", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "IF-Else", "ERROR If-Else","Faltan dos Puntos", fila, columna)); 
                             estado = -1;
                         }
                         break;
                         //estructura para el bloque de if-else
                     case 31://si ya termino el bloque de else
-                       // System.out.println("estado 31");
+                        //System.out.println("estado 31");
                         if(fin_DE_Bloque(columna)){
                             estado = 14;
                         }else{
@@ -505,9 +950,11 @@ estrucSintactico.add(new Estructura("IF-Else", "IF-Else", "ERROR If-Else","Falta
                         }
                         break;
                     case 32://si el else esta vacio
-                       // System.out.println("estado 31");
+                        //System.out.println("estado 31");
                         if(finCodigo()){
                             estado = 14; 
+                        }else if(Return(columna)){
+                            estado = 14;
                         }else{
                             estado = 33;
                         }
@@ -515,7 +962,7 @@ estrucSintactico.add(new Estructura("IF-Else", "IF-Else", "ERROR If-Else","Falta
                     case 33://si el bloque esta mal identando
                         if(identacion(columna, number, columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "If-Else", "ERROR If-Else","Bloque Else con mala identacion", fila, columna));
                         }else{
                             estado = 34;
                         }
@@ -523,13 +970,13 @@ estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala
                     case 34://sigue analizanod el bloque para el else
                         if(!segundaIdentacion(columna)){
                             estado = -1;
-estrucSintactico.add(new Estructura("IF", "IF", "ERROR If","Bloque Else con mala identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "If-Else", "ERROR If-Else","Bloque Else con mala identacion", fila, columna));
                         }else{
                             estado = 31;
                         }
                         break;
                     case 14://estado de aceptacion para el if-else
-                       // System.out.println("estado 14");
+                        //System.out.println("estado 14");
 estrucSintactico.add(new Estructura("IF-Else", "IF-Else", "If-Else Valido","",fila, columna));     
                         estado = 22;
                         break;
@@ -554,7 +1001,7 @@ estrucSintactico.add(new Estructura("IF-Else", "IF-Else", "If-Else Valido","",fi
                             estado = 1;
                         }else{
                           estado = -1;
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "ERROR desconocido", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "ERROR desconocido", fila, columna));
                         }
                         break;
                     case 1://estado el cual buscara una condicion con fila similar a la del for
@@ -562,7 +1009,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "ERROR descono
                         if(condicion3(fila)){
                             estado = 2;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una condicion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta una condicion", fila, columna));
                             estado = -1;
                         }
                         break;
@@ -571,7 +1018,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una con
                         if(palabraIn(fila)){
                             estado = 3;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta el token in", fila, columna));     
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta el token in", fila, columna));     
                             estado = -1;
                         }
                         break;
@@ -582,7 +1029,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta el toke
                         }else if(condicion()){
                             estado = 10;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una condicion", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta una condicion", fila, columna));    
                             estado = -1;
                         }
                         break;
@@ -591,7 +1038,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una con
                         if(parentesisAbierto()){
                             estado = 5;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta un parentesis", fila, columna));     
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta un parentesis", fila, columna));     
                             estado = -1;
                         }
                         break;
@@ -600,7 +1047,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta un pare
                         if(condicion2()){
                             estado = 6;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una condicion dentro del parentesis", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta una condicion dentro del parentesis", fila, columna));
                             estado = -1;
                         }
                         break;                        
@@ -615,7 +1062,6 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una con
                     case 7://si viene una coma indica que no es una condicion simple
                         //System.out.println("estado 7");
                         if(coma()){
-                            System.out.println("es coma");
                             estado = 8;
                         }else{
                             estado = 9;
@@ -626,7 +1072,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una con
                         if(condicion3(fila)){
                             estado = 6;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una condicion luego de la coma", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta una condicion luego de la coma", fila, columna));    
                            estado = -1;                             
                         }
                         break;
@@ -639,7 +1085,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta una con
                         }else if(coma()){
                             estado =8;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta un parentesis de cierre", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Falta un parentesis de cierre", fila, columna));    
                            estado = -1;                             
                         }
                         break;
@@ -648,7 +1094,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Falta un pare
                         if(dosPuntos()){
                            estado = 11; 
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Faltan dos puntos", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Faltan dos puntos", fila, columna));    
                            estado = -1; 
                         }
                         break;
@@ -683,7 +1129,7 @@ estrucSintactico.add(new Estructura("For", "For", "For Valido", "", fila, column
                     case 14://bloque que identifica la identacion
                         //System.out.println("estado 14");
                         if(identacion(columna, number, columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque con mala identacion", fila, columna));;      
                             estado = -1;
                         }else{
                             estado = 15;
@@ -691,7 +1137,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque con ma
                         break;
                     case 15://segundo bloque de identacion 
                         if(!segundaIdentacion(columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque con mala identacion", fila, columna));;      
                             estado = -1;
                         }else{
                             estado = 11;
@@ -711,7 +1157,7 @@ estrucSintactico.add(new Estructura("For", "For", "For Valido con Break", "", fi
                         }else if(dosPuntosEspe()){
                             estado = 24;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Faltan dos puntos en el else", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Faltan dos puntos en el else", fila, columna));;      
                             estado = -1;                            
                         }
                         break;
@@ -726,7 +1172,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Faltan dos pu
                         break;
                     case 25://detectar mala identacion en el for-else con break
                         if(identacion(columna, number, columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
                             estado = -1;                            
                         }else{
                             estado = 26;
@@ -734,7 +1180,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else c
                         break;
                     case 26://detectar mala identaicon el for-else con break
                         if(!segundaIdentacion(columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
                             estado = -1;                            
                         }else{
                             estado = 24;
@@ -750,7 +1196,7 @@ estrucSintactico.add(new Estructura("For", "For", "For-Else con break Valido", "
                         }else if(dosPuntosEspe()){
                             estado = 17;
                         }else{
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Faltan dos puntos en el else", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Faltan dos puntos en el else", fila, columna));;      
                             estado = -1;                            
                         }
                         break;
@@ -765,7 +1211,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Faltan dos pu
                         break;
                     case 18://detecta si el bloque tiene mala identacion
                         if(identacion(columna, number, columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
                             estado = -1;                            
                         }else{
                             estado = 19;
@@ -773,7 +1219,7 @@ estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else c
                         break;
                     case 19://segundo metodo para detectar si tiene mala identacion
                         if(!segundaIdentacion(columna)){
-estrucSintactico.add(new Estructura("For", "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
+estrucSintactico.add(new Estructura(errorSIn, "For", "ERROR en For", "Bloque else con mala identacion", fila, columna));;      
                             estado = -1;                            
                         }else{
                             estado = 17;
@@ -803,7 +1249,7 @@ estrucSintactico.add(new Estructura("For", "For", "For-Else Valido", "", fila, c
                             columna = tokens.get(number).getColumna();
                             estado = 1;
                        }else{
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "ERROR desconocido", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "ERROR desconocido", fila, columna));
                             estado = -1;
                        }
                        break;
@@ -819,7 +1265,7 @@ estrucSintactico.add(new Estructura("While", "While", "ERROR While", "ERROR desc
                             estado = 5;
                        }else{
                             estado = -1;
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Falta una Condicion Valida", fila, columna));                                                
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Falta una Condicion Valida", fila, columna));                                                
                        }
                        break;
                    case 3://luego de tener una condicion valida se encarga de obtener una asignacion valida o tomarla como condicion unica
@@ -831,7 +1277,7 @@ estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Falta una 
                             estado = 6;
                        }else{
                             estado = -1;
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Falta una asignacion Valida", fila, columna));   
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Falta una asignacion Valida", fila, columna));   
                        }
                        break;
                    case 4://luego de la asignacion puede ver una condicion
@@ -839,18 +1285,18 @@ estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Falta una 
                             estado = 5;
                        }else{
                             estado = -1;
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Falta una Condicion Valida", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Falta una Condicion Valida", fila, columna));    
                        }
                        break;
                    case 5://si el estado son dos puntos o un valor logico
-                       //System.out.println("estado 5");
+                        //System.out.println("estado 5");
                        if(dosPuntos()){
                             estado = 6;
                        }else if(isLogic()){
                             estado = 1;
                        }else{
                             estado = -1;
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Faltan Dos Puntos", fila, columna));   
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Faltan Dos Puntos", fila, columna));   
                        }
                        break;
                    case 6://bloque encargado de buscar si existe un fin de bloque o un fin de codigo 
@@ -866,7 +1312,7 @@ estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Faltan Dos
                         //System.out.println("llega al estado 7");
                        if(identacion(columna, number, columna)){
                             estado = -1;  
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Mala Identacion", fila, columna));  
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Mala Identacion", fila, columna));  
                        }else{
                             estado = 8;
                        }
@@ -875,7 +1321,7 @@ estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Mala Ident
                         //System.out.println("estado 8");
                        if(!segundaIdentacion(columna)){
                           estado = -1; 
-estrucSintactico.add(new Estructura("While", "While", "ERROR While", "Mala Identacion", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "While", "ERROR While", "Mala Identacion", fila, columna));
                        }else{
                             estado = 6;
                        }
@@ -905,40 +1351,41 @@ estrucSintactico.add(new Estructura("While", "While", "While Valido", "", fila, 
                             estado = 1;
                        }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "ERROR desconocido", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "ERROR desconocido", fila, columna));
                        }
                        break;
                    case 1://estado que encuentra el nombre de la funcion
-                       //System.out.println("estado 1");
+                        //System.out.println("estado 1");
                        if(identificador()){
+                           name = tokens.get(i+1).getLexema();
                          estado = 2;  
                         }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falta un nombre de la Funcion", fila, columna)); 
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Falta un nombre de la Funcion", fila, columna)); 
                        }
                        break;
                    case 2://estado el cual se encarga de encontrar el parentesis de abertura
-                       //System.out.println("estado 2");
+                        //System.out.println("estado 2");
                        if(parentesisAbierto()){
                          estado = 3;  
                        }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falta un Parentesis", fila, columna));    
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Falta un Parentesis", fila, columna));    
                        }
                        break;
                    case 3://sirve para identificar una funcion simple o con valores
-                       //System.out.println("estado 3");
+                        //System.out.println("estado 3");
                        if (condicion2()) {
                             estado = 4;
                         } else if (parentesisCerrado()) {
                             estado = 8;
                         } else {
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falta un Parentesis o Condicion", fila, columna));        
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Falta un Parentesis o Condicion", fila, columna));        
                         }
                        break;
                    case 4://si es una funcion con valores esta se encarga de poder encontrar mas si hay una coma
-                       //System.out.println("estado 4");
+                        //System.out.println("estado 4");
                        if(coma()){
                            estado = 5;
                        }else{
@@ -950,12 +1397,12 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falt
                          estado = 15;  
                        }else{
                         estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falta una Condicion Luego de La coma", fila, columna));                 
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Falta una Condicion Luego de La coma", fila, columna));                 
                        }
                        break;
                        //estructura extra para poder encontrar mas condicines dento de este mismo
                    case 15://estado para seguir encontrando mas valores
-                       //System.out.println("\u001B[31mestado 15 \u001B[31m");
+                        //System.out.println("\u001B[31mestado 15 \u001B[31m");
                        if(coma()){
                            estado = 5;
                        }else{
@@ -963,7 +1410,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falt
                        }
                        break;
                    case 6://estado el cual encuentra un parentesis luego de valores dentro de la funcion
-                       //System.out.println("estado 6");
+                        //System.out.println("estado 6");
                        if(parentesisCerrado()){
                            estado = 8;
                        }else{
@@ -975,18 +1422,18 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falt
                            estado = 8;
                        }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falta un Parentesis de cierre", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Falta un Parentesis de cierre", fila, columna));
                        }
                        break;
                    case 8://estado el cual indica el fin de la estructura de la funcion
-                       //System.out.println("estado 8");
+                        //System.out.println("estado 8");
                        if(dosPuntos()){
                            estado = 9;
                        }else if(dosPuntosEspe()){
                            estado = 9;
                        }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Faltan dos puntos", fila, columna));       
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Faltan dos puntos", fila, columna));       
                        }
                        break;
                    case 9://encargado de analizar si es una funcion con 1: retorno 2: fin del bloque 3: funcion vacia
@@ -1003,7 +1450,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Falt
                    case 10://bloque que se encarga de la identacion
                        if(identacion(columna, number, columna)){
                           estado = -1; 
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Mala Identacion en bloque", fila, columna));       
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Mala Identacion en bloque", fila, columna));       
                        }else{
                            estado = 11;
                        }
@@ -1011,26 +1458,26 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Mala
                    case 11://bloque el cual es de respaldo para la identacion //no eliminar este y ninguno otro
                        if(!segundaIdentacion(columna)){
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "ERROR Funcion", "Mala Identacion en bloque", fila, columna));      
+estrucSintactico.add(new Estructura(errorSIn, "Funcion", "ERROR Funcion", "Mala Identacion en bloque", fila, columna));      
                        }else{
                            estado = 9;
                        }
                        break;
                    case 12://bloque de aceptacion para una funcion simple
                        estado = 22;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Valida", "", fila, columna));     
+estrucSintactico.add(new Estructura("Funcion", name, "Funcion Valida", "", fila, columna));     
                        break;
                    case 13://bloque para retornar un valor de la funcion
                        if(condicion2()){
                            estado = 14;
                        }else{
                            estado = -1;
-estrucSintactico.add(new Estructura("Funcion", "ERROR funcion return", "ERROR en valor de retorno", "", fila, columna));       
+estrucSintactico.add(new Estructura(errorSIn, "ERROR funcion return", "ERROR en valor de retorno", "", fila, columna));       
                        }
                        break;
                    case 14://estado de acpetacion para una funcion return
                        estado = 22;
-estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida", "", fila, columna));      
+estrucSintactico.add(new Estructura("Funcion", name, "Funcion Return Valida", "", fila, columna));      
                        break;
                    default:
                        throw new AssertionError();
@@ -1040,25 +1487,296 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
        return estrucSintactico;
    }
    
-
-    
-    
-    
-    
+    //estructura de la impresion de funciones (invalido)
+    public List<Estructura> impresionFunciones(int number){
+        estado = 0;
+        for (int i = number; i < tokens.size(); i++) {
+            while(estado != -1 && estado !=22){
+                switch (estado) {
+                    case 0:
+                        if(tokens.get(number).getLexema().equals("print")){
+                            fila = tokens.get(number).getFila();
+                            columna = tokens.get(number).getColumna();
+                            estado = 1;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "ERROR Desconocido", fila, columna));
+                        }
+                        break;
+                    case 1:
+                        if(parentesisAbierto()){
+                            estado = 2;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta un parentesis de abertura", fila, columna));                            
+                        }
+                        break;
+                    case 2:
+                        if(condicion()){
+                            name = tokens.get(i + 2).getLexema();
+                            estado = 3;
+                        }else if(condicion3(fila)){
+                            name = tokens.get(i+2).getLexema();
+                            estado = 3;
+                        }else if(parentesisCerrado()){
+                            estado = 12;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 3:
+                        if(parentesisAbierto()){
+                            estado = 4;
+                        }else if(coma()){
+                            estado = 10;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre", fila, columna));                            
+                        }
+                        break;
+                    case 4:
+                        if(condicion2()){
+                            estado = 5;
+                        }else if(parentesisMal()){
+                            estado = 8;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre en función", fila, columna));    
+                        }
+                        break;
+                    case 5:
+                        if(coma()){
+                            estado = 6;
+                        }else if(parentesisCerrado()){
+                            estado = 8;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre en funcion", fila, columna));
+                        }
+                        break;
+                    case 6:
+                        if(condicion3(fila)){
+                            estado = 7;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta una condicion luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 7:
+                        if(coma()){
+                            estado = 6;
+                        }else if(parentesisCerrado()){
+                            estado = 8;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre en funcion", fila, columna));
+                        }
+                        break;
+                    case 8:
+                        if(parentesisCerrado()){
+                            estado = 9;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre", fila, columna));
+                        }
+                        break;
+                    case 9:
+                        if(!condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Error en impresion", fila, columna));
+                        }else{
+                            estado = 22;
+estrucSintactico.add(new Estructura("Print Funcion", name, "Print Valido", "", fila, columna));
+                        }
+                        break;
+                    case 10: 
+                        if(condicion3(fila)){
+                            estado = 11;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta una condicion luego de la coma", fila, columna));
+                        }
+                        break;
+                    case 11:
+                        if(coma()){
+                            estado = 10;
+                        }else if(parentesisCerrado()){
+                            estado = 12;
+                        }else{
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre", fila, columna));
+                        }
+                        break;
+                    case 12:
+                        if(condicionERROR(fila)){
+                            estado = -1;
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Impresion Errone", fila, columna));
+                        }else{
+                        estado = 22;
+estrucSintactico.add(new Estructura("Print simple", "Print", "Print Valido", "", fila, columna));
+                        }
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
+            }//fin del while
+        }//fin del for
+        return estrucSintactico;
+    }//fin de la clase impresiones
     
     //estructuras para el reconocimiento de operaciones
+    //ESTRUCTURA PARA LA DECLARACION DE LAS VARIABLES Y TERNARIO
+    //SOLO SON ESTRUCTURAS DE VALORES ESPCIALES CON CAMBIOS SUTILES PERO UTILES VALIDADO
+    private boolean asignacion(int fila) {
+        // si es un tipo de token que se este asignado en el apartado
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Asignacion") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    private boolean identificadorVariables(int fila) {
+    //sirve para encontrar el token identificador    
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+        if (tokens.get(number).getTipoToken().equals("Identificador")&& tokens.get(number).getFila() == fila) {
+            return true;
+        }
+        }
+        return false;
+    }
+    private boolean corcheteCerradoEspe() {
+    //token para los corchetes cerrado
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("}")) {
+                //System.out.println("Si son corchetes");
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean corcheteAbiertoEspe() {
+    //token para los abiertos
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("{")) {
+                //System.out.println("Si son corchetes");
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean comaEspe() {
+    //sirve para aplicar condiciones varias
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals(",")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //ESTRUCTURA PARA TIPOS DE VALOR VALIDADO
+    private boolean var(int fila){
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Identificador") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    private boolean var_Espe(int fila){
+    number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Identificador") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    private boolean int_(int fila){
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Numero entero") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }    
+    private boolean int_Espe(int fila){
+    number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Numero entero") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }    
+    private boolean float_(int fila){
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Numero decimal") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }    
+    private boolean float_Espe(int fila){
+    number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Numero decimal") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }    
+    private boolean booleanas(int fila){
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Booleana") && tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    private boolean Strings_(int fila){
+        for (int i = number; i < tokens.size(); i++) {
+            if ((tokens.get(number).getTipoToken().equals("Cadena") 
+              || tokens.get(number).getTipoToken().equals("Cadena simple") )&& tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }     
+    private boolean Strings_Espe(int fila){
+    number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if ((tokens.get(number).getTipoToken().equals("Cadena") 
+              || tokens.get(number).getTipoToken().equals("Cadena simple") )&& tokens.get(number).getFila() == fila) {
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }        
     
     //ESTRUCTURA ESPECIALES LAS CUALES SERVIRAN PARA IDENTIICAR FIN DE BLOQUE O BLOQUES CON IDENTACION
     //sirve para identicar el final del codigo con 0 tokesn por delante V
     private boolean finCodigo() {
         return number >= tokens.size();
     }
-    //sirve para reconocer fin de bloques
+    //sirve para reconocer fin de bloques V
     private boolean fin_DE_Bloque(int columna) {
         //identifica un token con una columna que tendra como indicativo fin de bloque 
         number++;
         for (int i = number; i < tokens.size(); i++) {
-            //  System.out.println(tokens.get(number).getColumna());
+            //System.out.println(tokens.get(number).getColumna());
             if ((tokens.get(number).getTipoToken().equals("Identificador")
                     || tokens.get(number).getTipoToken().equals("Aritmetico")
                     || tokens.get(number).getTipoToken().equals("Comparación")
@@ -1074,19 +1792,19 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     || tokens.get(number).getTipoToken().equals("Booleana")
                     || tokens.get(number).getTipoToken().equals("Otros"))
                     && tokens.get(number).getColumna() == columna) {
-                // System.out.println("ya no es parte del bloque");
+                //System.out.println("ya no es parte del bloque");
                 return true;
             } else {
-                // System.out.println("no entro");
+                //System.out.println("no entro");
             }
         }
         return false;
     }
-    //fin de bloque con valores especiales
+    //fin de bloque con valores especiales V
     private boolean fin_DE_Bloque_if(int columna) {
         //identifica un token con una columna que tendra como indicativo fin de bloque para if
         for (int i = number; i < tokens.size(); i++) {
-            //  System.out.println(tokens.get(number).getColumna());
+            //System.out.println(tokens.get(number).getColumna());
             if ((tokens.get(number).getTipoToken().equals("Identificador")
                     || tokens.get(number).getTipoToken().equals("Aritmetico")
                     || tokens.get(number).getTipoToken().equals("Comparación")
@@ -1103,10 +1821,10 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     || tokens.get(number).getTipoToken().equals("Otros"))
                     && tokens.get(number).getColumna() == columna) {
                 estado++;
-                // System.out.println("ya no es parte del bloque");
+                //System.out.println("ya no es parte del bloque");
                 return true;
             } else {
-                // System.out.println("no entro");
+                //System.out.println("no entro");
             }
         }
         return false;
@@ -1118,6 +1836,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         columnaEsperada = columna + 4;
         while (i < numTokens) {
             Token tokenss = tokens.get(i);
+            //System.out.println(columnaEsperada);
             if ((tokenss.getTipoToken().equals("Identificador")
                     || tokenss.getTipoToken().equals("Aritmetico")
                     || tokenss.getTipoToken().equals("Comparación")
@@ -1136,6 +1855,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                 // Si la columna del token actual coincide con la columna esperada, retorna true
                 return true;
             } else if (tokenss.getColumna() == columna) {
+                //System.out.println("columan del breac"+columna);
                 break;
             }
 
@@ -1149,8 +1869,9 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         //verifica una segunda identacion
         int colum = 0;
         colum = 4 + columna;
+        //System.out.println("colum"+colum);
         for (int i = number; i < tokens.size(); i++) {
-            //  System.out.println(tokens.get(number).getColumna());
+            //System.out.println(tokens.get(number).getColumna());
             if ((tokens.get(number).getTipoToken().equals("Identificador")
                     || tokens.get(number).getTipoToken().equals("Aritmetico")
                     || tokens.get(number).getTipoToken().equals("Comparación")
@@ -1174,19 +1895,31 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         return false;
     }
     
-    
     //ESTRUCTURA PARA IDENTIFICAR PALABRAS RESERVADAS EN FUNCIONES
+    //if para valores ternarios
+    private boolean IF_Ternario(int fila) {
+    //aca encuentra el valor de if y lo remueve para que noa tomado como un if simple
+        for (int i = number; i < tokens.size(); i++) {
+            //System.out.println(tokens.get(number).getColumna());
+            if (tokens.get(number).getLexema().equals("if") && tokens.get(number).getFila() == fila) {
+                tokens.remove(i);
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
     //estructura para elifs V
     private boolean Elif(int columna, int fila) {
         //identifica la palabra elif
         number++;
         for (int i = number; i < tokens.size(); i++) {
-            // System.out.println(tokens.get(number).getColumna());
+            //System.out.println(tokens.get(number).getColumna());
             if (tokens.get(number).getLexema().equals("elif")
                     && tokens.get(number).getColumna() == columna) {
                 return true;
             } else {
-                // System.out.println("No entra en su columna");
+                //System.out.println("No entra en su columna");
             }
         }
         return false;
@@ -1199,7 +1932,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     && (tokens.get(number).getColumna() == columna)) {
                 return true;
             } else {
-                //  System.out.println("No entra en su columna else");
+                //System.out.println("No entra en su columna else");
             }
         }
         return false;
@@ -1213,7 +1946,32 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     && (tokens.get(number).getColumna() == columna)) {
                 return true;
             } else {
-                //  System.out.println("No entra en su columna else");
+                //System.out.println("No entra en su columna else");
+            }
+        }
+        return false;
+    }
+    //para identificar los valores else ternario V
+    private boolean elseTernario(int fila) {
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("else")
+                    && (tokens.get(number).getFila() == fila)) {
+                return true;
+            } else {
+                //System.out.println("No entra en su columna else");
+            }
+        }
+        return false;
+    }
+    //else ternario especial V
+    private boolean elseTernarioEspe(int fila) {
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("else")
+                    && (tokens.get(number).getFila() == fila)) {
+                return true;
+            } else {
+                //System.out.println("No entra en su columna else");
             }
         }
         return false;
@@ -1256,7 +2014,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     && (tokens.get(number).getFila() == fila)) {
                 return true;
             } else {
-                // System.out.println("No entra en su columna else");
+                //System.out.println("No entra en su columna else");
             }
         }
         return false;
@@ -1266,7 +2024,6 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
     //bloque para poder identificar un return identado
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(number).getLexema().equals("return") && tokens.get(i).getColumna() == columna + 4) {
-                estado++;
                 return true;
             }
         }
@@ -1285,6 +2042,80 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
                     || tokens.get(number).getTipoToken().equals("Booleana")
                     || tokens.get(number).getTipoToken().equals("Identificador"))) {
                 estado++;
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    //condicion especial para identificar errores
+    public boolean condicionERROR(int fila) {
+        //condicion valida inicial
+        for (int i = number; i < tokens.size(); i++) {
+            if ((tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Aritmetico")
+                    || tokens.get(number).getTipoToken().equals("Comparación")
+                    || tokens.get(number).getTipoToken().equals("Logicos")
+                    || tokens.get(number).getTipoToken().equals("Asignacion")
+                    || tokens.get(number).getTipoToken().equals("Palabra reservada")
+                    || tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Numero decimal")
+                    || tokens.get(number).getTipoToken().equals("Cadena")
+                    || tokens.get(number).getTipoToken().equals("Comentario Simple")
+                    || tokens.get(number).getTipoToken().equals("ERROR")
+                    || tokens.get(number).getTipoToken().equals("Booleana")
+                    || tokens.get(number).getTipoToken().equals("Otros")
+                    || tokens.get(number).getTipoToken().equals("Identificador"))
+                    && tokens.get(number).getFila() == fila) {
+                estado++;
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    public boolean condicionERROREspe(int fila) {
+        //condicion valida inicial
+        for (int i = number; i < tokens.size(); i++) {
+            if ((tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Aritmetico")
+                    || tokens.get(number).getTipoToken().equals("Comparación")
+                    || tokens.get(number).getTipoToken().equals("Logicos")
+                    || tokens.get(number).getTipoToken().equals("Asignacion")
+                    || tokens.get(number).getTipoToken().equals("Palabra reservada")
+                    || tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Numero decimal")
+                    || tokens.get(number).getTipoToken().equals("Cadena")
+                    || tokens.get(number).getTipoToken().equals("Comentario Simple")
+                    || tokens.get(number).getTipoToken().equals("ERROR")
+                    || tokens.get(number).getTipoToken().equals("Otros")
+                    || tokens.get(number).getTipoToken().equals("Identificador"))
+                    && tokens.get(number).getFila() == fila) {
+                estado++;
+                return true;
+            } else {
+            }
+        }
+        return false;
+    }
+    public boolean condicionERRORDoble(int fila) {
+        //condicion valida inicial
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if ((tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Aritmetico")
+                    || tokens.get(number).getTipoToken().equals("Comparación")
+                    || tokens.get(number).getTipoToken().equals("Logicos")
+                    || tokens.get(number).getTipoToken().equals("Asignacion")
+                    || tokens.get(number).getTipoToken().equals("Palabra reservada")
+                    || tokens.get(number).getTipoToken().equals("Numero entero")
+                    || tokens.get(number).getTipoToken().equals("Numero decimal")
+                    || tokens.get(number).getTipoToken().equals("Cadena")
+                    || tokens.get(number).getTipoToken().equals("Comentario Simple")
+                    || tokens.get(number).getTipoToken().equals("ERROR")
+                    || tokens.get(number).getTipoToken().equals("Otros")
+                    || tokens.get(number).getTipoToken().equals("Identificador"))
+                    && tokens.get(number).getFila() == fila) {
                 return true;
             } else {
             }
@@ -1330,7 +2161,6 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
     //sirve para encontrar el token identificador    
         number++;
         if (tokens.get(number).getTipoToken().equals("Identificador")) {
-            estado++;
             return true;
         }
         return false;
@@ -1338,6 +2168,18 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
     //condicion logica V
     private boolean isLogic() {
         //si el valor que se tiene es logico
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getTipoToken().equals("Logicos")) {
+                estado++;
+                return true;
+            }
+        }
+        return false;
+    }
+    //condicion logica especial V
+    private boolean EspeLogic() {
+        //si el valor que se tiene es logico
+    number++;    
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(number).getTipoToken().equals("Logicos")) {
                 estado++;
@@ -1358,9 +2200,7 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         }
         return false;
     }
-    
-    
-    
+ 
     //ESTRUCTURA PARA VALORES DE ASIGNACIONES ES DECIR = < > O CARACTERES ESPECIALES COMO , { } ETC
     //asigancion IFS V
     private boolean asignacionIFS() {
@@ -1383,6 +2223,30 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         number++;
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(number).getLexema().equals(",")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //tokne de corchete abierto V
+    private boolean corcheteAbierto() {
+    //token para los abiertos
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("{")) {
+                //System.out.println("Si son corchetes");
+                return true;
+            }
+        }
+        return false;
+    }
+    //tokne de corchete cerrado V
+    private boolean corcheteCerrado() {
+    //token para los corchetes cerrado
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("}")) {
+                //System.out.println("Si son corchetes");
                 return true;
             }
         }
@@ -1414,10 +2278,43 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         }
         return false;
     }
+    //token para encontrar una llave abierta V
+    private boolean llaveAbierta() {
+    //si se abre la llave o no     
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("[")) {
+                //System.out.println("Si son corchetes");
+                return true;
+            }
+        }
+        return false;
+    }
+    //token para encontrar una llave cerrada V
+    private boolean llaveCerradaEspe() {
+    //si la llave se cierra o no
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("]")) {
+                return true;
+            }
+        }
+        return false;
+    }
     //token de parentesis inicial V
     private boolean parentesisAbierto() {
     //si es un token de parentesisi inicial
         number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("(")) {
+                //System.out.println("si es un parentesis abierto");
+                return true;
+            }
+        }
+        return false;
+    }
+    //metodo para saber el nombre de la funcion
+     private boolean parentesisAbiertoEspe() {
+    //si es un token de parentesisi inicial
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(number).getLexema().equals("(")) {
                 //System.out.println("si es un parentesis abierto");
@@ -1448,142 +2345,4 @@ estrucSintactico.add(new Estructura("Funcion", "Funcion", "Funcion Return Valida
         }
         return false;
     }
-    
-    
-    
-    
-    
-
-
-    //manera para asignar un valor a las variables las cuales pueden ir de distintos tipos
-    public boolean asignacionHecha(int fila) {
-        // si es un valor valido para una asiganacion
-
-        for (int i = number; i < tokens.size(); i++) {
-            if ((tokens.get(number).getTipoToken().equals("Numero entero")
-                    || tokens.get(number).getTipoToken().equals("Numero decimal")
-                    || tokens.get(number).getTipoToken().equals("Cadena")
-                    || tokens.get(number).getTipoToken().equals("Booleana")
-                    || tokens.get(number).getTipoToken().equals("Cadena Simple")
-                    || tokens.get(number).getTipoToken().equals("Booleana")
-                    || tokens.get(number).getTipoToken().equals("Identificador"))
-                    && tokens.get(number).getFila() == fila) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean corchetesAbiertos() {
-        number++;
-        for (int i = number; i < tokens.size(); i++) {
-            if (tokens.get(number).getLexema().equals("[")) {
-                System.out.println("Si son corchetes");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean corchetesCerrados() {
-
-        for (int i = number; i < tokens.size(); i++) {
-            if (tokens.get(number).getLexema().equals("]")) {
-
-                System.out.println("Si son corchetes dos");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean corchetesCerrados2() {
-        number++;
-        for (int i = number; i < tokens.size(); i++) {
-            if (tokens.get(number).getLexema().equals("]")) {
-
-                System.out.println("Si son corchetes dos");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean asignacion() {
-        // si es un tipo de token que se este asignado en el apartado
-        number++;
-        for (int i = number; i < tokens.size(); i++) {
-
-            //System.out.println("El TIPO de token es: \u001B[35m" + tokens.get(i).getTipoToken());
-            if (tokens.get(number).getTipoToken().equals("Asignacion")) {
-
-                return true;
-            } else {
-            }
-        }
-        return false;
-    }
-
-    private boolean IF(int fila) {
-
-        for (int i = number; i < tokens.size(); i++) {
-            //  System.out.println(tokens.get(number).getColumna());
-            if (tokens.get(number).getLexema().equals("if") && tokens.get(number).getFila() == fila) {
-                tokens.remove(i);
-                return true;
-            } else {
-            }
-        }
-        return false;
-    }
-
-
-    public boolean errorCondicion(int fila) {
-        // si es un valor valido para la condicion if
-        for (int i = number; i < tokens.size(); i++) {
-            if ((tokens.get(number).getTipoToken().equals("Numero entero")
-                    || tokens.get(number).getTipoToken().equals("Numero decimal")
-                    || tokens.get(number).getTipoToken().equals("Cadena")
-                    || tokens.get(number).getTipoToken().equals("Identificador"))
-                    && tokens.get(number).getFila() == fila) {
-                estado++;
-                return true;
-            } else {
-            }
-        }
-        return false;
-    }
-    
-    public boolean condicion_Ternario(int fila) {
-        // si es un valor valido para la condicion if 2
-        number++;
-        for (int i = number; i < tokens.size(); i++) {
-            if ((tokens.get(number).getTipoToken().equals("Numero entero")
-                    || tokens.get(number).getTipoToken().equals("Numero decimal")
-                    || tokens.get(number).getTipoToken().equals("Cadena")
-                    || tokens.get(number).getTipoToken().equals("Identificador"))
-                    && tokens.get(number).getFila() == fila) {
-                estado++;
-                return true;
-            } else {
-            }
-        }
-        return false;
-    }
-
-    private boolean elseTernario(int fila) {
-        number++;
-        for (int i = number; i < tokens.size(); i++) {
-            if (tokens.get(number).getLexema().equals("else")
-                    && (tokens.get(number).getFila() == fila)) {
-                estado++;
-                return true;
-            } else {
-                // System.out.println("No entra en su columna else");
-            }
-        }
-        return false;
-    }
-
-   
 }//fin de la clase

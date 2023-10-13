@@ -448,9 +448,19 @@ avanzarChar();
                 retroceder();
                 caracterActual=obtenerPosicionCaracter();
                 if(caracterActual == '*'){
+                    avanzarChar();
+                    avanzarChar();
+                    String lexema3 = Character.toString(caracterActual);
+                    retroceder();
+                    caracterActual=obtenerPosicionCaracter();
+                    if(caracterActual == '='){
                     String lexema = Character.toString(caracterActual);
+tokens.add(new Token(lexema2+lexema3+lexema, "Asignacion", filaActual, columnaActual-lexema2.length()+1,lexema2+lexema3+lexema));
+avanzarChar(); 
+                    }else{
+                        String lexema = Character.toString(caracterActual);
 tokens.add(new Token(lexema2+lexema, "Aritmetico", filaActual, columnaActual-lexema2.length()+1,lexema2+lexema));
-avanzarChar();
+avanzarChar();}
                }else if(caracterActual == '='){
                  String lexema = Character.toString(caracterActual);
 tokens.add(new Token(lexema2+lexema, "Asignacion", filaActual, columnaActual-lexema2.length()+1,lexema2+lexema));

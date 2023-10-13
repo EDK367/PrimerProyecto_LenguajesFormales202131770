@@ -34,30 +34,120 @@ public class TokensVisuales extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lexicoVisual = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablaTokens = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        seleccionToken = new javax.swing.JTextArea();
+        jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         lexicoTabla = new javax.swing.JTable();
         identificador = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        buscarText = new javax.swing.JTextField();
-        buscar = new javax.swing.JButton();
         error = new javax.swing.JButton();
         reservada = new javax.swing.JButton();
         number = new javax.swing.JButton();
         signos = new javax.swing.JButton();
         cadenas = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaTokens = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        seleccionToken = new javax.swing.JTextArea();
+        buscarText = new javax.swing.JTextField();
+        buscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setType(java.awt.Window.Type.UTILITY);
 
-        lexicoVisual.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel2.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        lexicoTabla.setBackground(new java.awt.Color(102, 102, 102));
+        lexicoTabla.setForeground(new java.awt.Color(255, 255, 255));
+        lexicoTabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Tipo Token", "Patron", "Lexema", "Fila"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        lexicoTabla.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        lexicoTabla.setSelectionForeground(new java.awt.Color(0, 0, 204));
+        jScrollPane3.setViewportView(lexicoTabla);
+        if (lexicoTabla.getColumnModel().getColumnCount() > 0) {
+            lexicoTabla.getColumnModel().getColumn(0).setResizable(false);
+            lexicoTabla.getColumnModel().getColumn(1).setResizable(false);
+            lexicoTabla.getColumnModel().getColumn(2).setResizable(false);
+            lexicoTabla.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        jPanel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 30, 440, 178));
+
+        identificador.setBackground(new java.awt.Color(102, 102, 102));
+        identificador.setText("Identificadores");
+        identificador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identificadorActionPerformed(evt);
+            }
+        });
+        jPanel2.add(identificador, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 240, -1, -1));
+
+        error.setBackground(new java.awt.Color(102, 102, 102));
+        error.setText("ERRORES");
+        error.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                errorActionPerformed(evt);
+            }
+        });
+        jPanel2.add(error, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 240, -1, -1));
+
+        reservada.setBackground(new java.awt.Color(102, 102, 102));
+        reservada.setText("Palabras Reservadas");
+        reservada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reservadaActionPerformed(evt);
+            }
+        });
+        jPanel2.add(reservada, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 240, -1, -1));
+
+        number.setBackground(new java.awt.Color(102, 102, 102));
+        number.setText("Números");
+        number.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numberActionPerformed(evt);
+            }
+        });
+        jPanel2.add(number, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 240, -1, -1));
+
+        signos.setBackground(new java.awt.Color(102, 102, 102));
+        signos.setText("Signos");
+        signos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                signosActionPerformed(evt);
+            }
+        });
+        jPanel2.add(signos, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 280, -1, -1));
+
+        cadenas.setBackground(new java.awt.Color(102, 102, 102));
+        cadenas.setText("Cadenas");
+        cadenas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cadenasActionPerformed(evt);
+            }
+        });
+        jPanel2.add(cadenas, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 280, -1, -1));
+
+        tablaTokens.setBackground(new java.awt.Color(102, 102, 102));
+        tablaTokens.setForeground(new java.awt.Color(255, 255, 255));
         tablaTokens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -74,228 +164,115 @@ public class TokensVisuales extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tablaTokens.setGridColor(new java.awt.Color(102, 102, 102));
+        tablaTokens.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        tablaTokens.setSelectionForeground(new java.awt.Color(0, 0, 204));
         jScrollPane1.setViewportView(tablaTokens);
         if (tablaTokens.getColumnModel().getColumnCount() > 0) {
-            tablaTokens.getColumnModel().getColumn(0).setResizable(false);
             tablaTokens.getColumnModel().getColumn(1).setResizable(false);
-            tablaTokens.getColumnModel().getColumn(2).setResizable(false);
             tablaTokens.getColumnModel().getColumn(3).setResizable(false);
             tablaTokens.getColumnModel().getColumn(4).setResizable(false);
         }
 
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 470, 250));
+
+        jButton2.setBackground(new java.awt.Color(102, 102, 102));
         jButton2.setText("Token");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
+        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, -1, -1));
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Buscador de Token");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, -1, -1));
+
+        seleccionToken.setEditable(false);
+        seleccionToken.setBackground(new java.awt.Color(102, 102, 102));
         seleccionToken.setColumns(20);
+        seleccionToken.setForeground(new java.awt.Color(255, 255, 255));
         seleccionToken.setRows(5);
         seleccionToken.setText("Visualización de Tokens");
+        seleccionToken.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         jScrollPane2.setViewportView(seleccionToken);
 
-        lexicoTabla.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Tipo Token", "Patron", "Lexema", "Fila"
-            }
-        ));
-        jScrollPane3.setViewportView(lexicoTabla);
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 390, 120));
 
-        identificador.setText("Identificadores");
-        identificador.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identificadorActionPerformed(evt);
-            }
-        });
+        buscarText.setBackground(new java.awt.Color(102, 102, 102));
+        buscarText.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.add(buscarText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 410, 370, 30));
 
-        jLabel1.setText("Buscador de Token");
-
+        buscar.setBackground(new java.awt.Color(102, 102, 102));
         buscar.setText("Buscar");
         buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buscarActionPerformed(evt);
             }
         });
-
-        error.setText("ERRORES");
-        error.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                errorActionPerformed(evt);
-            }
-        });
-
-        reservada.setText("Palabras Reservadas");
-        reservada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reservadaActionPerformed(evt);
-            }
-        });
-
-        number.setText("Números");
-        number.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numberActionPerformed(evt);
-            }
-        });
-
-        signos.setText("Signos");
-        signos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signosActionPerformed(evt);
-            }
-        });
-
-        cadenas.setText("Cadenas");
-        cadenas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cadenasActionPerformed(evt);
-            }
-        });
+        jPanel2.add(buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 450, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buscar)
-                        .addGap(121, 121, 121)
-                        .addComponent(lexicoVisual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(79, 79, 79))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jButton2))
-                                    .addComponent(jLabel1))
-                                .addGap(12, 12, 12)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2)
-                                    .addComponent(buscarText)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(identificador)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(signos)
-                                .addGap(18, 18, 18)
-                                .addComponent(cadenas)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(error)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(reservada)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(number)))))
-                .addGap(16, 16, 16))
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(identificador)
-                                .addComponent(error))
-                            .addComponent(jButton2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lexicoVisual, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jLabel1))
-                                    .addComponent(buscarText))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(buscar)
-                                .addGap(16, 16, 16))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(reservada)
-                            .addComponent(number))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cadenas)
-                            .addComponent(signos))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    int fila = tablaTokens.getSelectedRow();
-    if (fila != -1) {
-        String datos = "Tipo de Token: "+tablaTokens.getValueAt(fila, 0) + "\n"
-                              +"Patron: "+ tablaTokens.getValueAt(fila, 1) + "\n"
-                              +"Lexema: "+ tablaTokens.getValueAt(fila, 2) + "\n"
-                              +"Fila: "+ tablaTokens.getValueAt(fila, 3) + "\n"
-                              +"Columna: "+ tablaTokens.getValueAt(fila, 4);
-        seleccionToken.setText(datos);
-    } else {
-        seleccionToken.setText("No se ha seleccionado ninguna fila.");
-    }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void cadenasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadenasActionPerformed
+        cadenas();
+    }//GEN-LAST:event_cadenasActionPerformed
 
-    private void identificadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificadorActionPerformed
-    //identificadores con una funcion en la original
-    identificadores();
-    
+    private void signosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signosActionPerformed
+        signos();
+    }//GEN-LAST:event_signosActionPerformed
 
-    }//GEN-LAST:event_identificadorActionPerformed
+    private void reservadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reservadaActionPerformed
+        reservadas();
+    }//GEN-LAST:event_reservadaActionPerformed
+
+    private void numberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberActionPerformed
+        numeros();
+    }//GEN-LAST:event_numberActionPerformed
+
+    private void errorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorActionPerformed
+        errores();
+    }//GEN-LAST:event_errorActionPerformed
 
     private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
         //metodo para buscar un token en concreto
         buscarTabla();
-
     }//GEN-LAST:event_buscarActionPerformed
 
-    private void errorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorActionPerformed
-    errores();
-    }//GEN-LAST:event_errorActionPerformed
+    private void identificadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificadorActionPerformed
+        //identificadores con una funcion en la original
+        identificadores();
 
-    private void reservadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reservadaActionPerformed
-    reservadas();
-    }//GEN-LAST:event_reservadaActionPerformed
+    }//GEN-LAST:event_identificadorActionPerformed
 
-    private void numberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberActionPerformed
-    numeros();
-    }//GEN-LAST:event_numberActionPerformed
-
-    private void signosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signosActionPerformed
-    signos();
-    }//GEN-LAST:event_signosActionPerformed
-
-    private void cadenasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadenasActionPerformed
-    cadenas();
-    }//GEN-LAST:event_cadenasActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        int fila = tablaTokens.getSelectedRow();
+        if (fila != -1) {
+            String datos = "Tipo de Token: "+tablaTokens.getValueAt(fila, 0) + "\n"
+            +"Patron: "+ tablaTokens.getValueAt(fila, 1) + "\n"
+            +"Lexema: "+ tablaTokens.getValueAt(fila, 2) + "\n"
+            +"Fila: "+ tablaTokens.getValueAt(fila, 3) + "\n"
+            +"Columna: "+ tablaTokens.getValueAt(fila, 4);
+            seleccionToken.setText(datos);
+        } else {
+            seleccionToken.setText("No se ha seleccionado ninguna fila.");
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
   
     
     
@@ -516,11 +493,11 @@ public class TokensVisuales extends javax.swing.JFrame {
     private javax.swing.JButton identificador;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable lexicoTabla;
-    private javax.swing.JPanel lexicoVisual;
     private javax.swing.JButton number;
     private javax.swing.JButton reservada;
     private javax.swing.JTextArea seleccionToken;
