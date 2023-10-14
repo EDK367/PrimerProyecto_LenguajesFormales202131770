@@ -52,11 +52,12 @@ public class sintaticoPrueba {
             } else if (tokens.get(i).getLexema().equals("def")) {
                 number = i;
                 estructuraFunciones(number);
-            }else if (tokens.get(i).getLexema().equals("print")){
+            }else if (tokens.get(i).getLexema().equals("print") && tokens.get(i).getColumna() == 1){
                 number = i;
+                System.out.println(tokens.get(number).getColumna());
                 impresionFunciones(number);
             }else{
-                
+                System.out.println("no se encontro nada");
             }
 
         }
@@ -745,7 +746,7 @@ estrucSintactico.add(new Estructura(errorSIn, "IF", "ERROR If","Faltan dos punto
                             estado = 16;
                         }
                         break;
-                        
+
                     case 16://estado 16 para reconocer fin de bloque otorgando un if simple
                         //System.out.println("estado 16");
                         if(fin_DE_Bloque_if(columna)){
@@ -1494,9 +1495,10 @@ estrucSintactico.add(new Estructura("Funcion", name, "Funcion Return Valida", ""
             while(estado != -1 && estado !=22){
                 switch (estado) {
                     case 0:
-                        if(tokens.get(number).getLexema().equals("print")){
+                        if(tokens.get(number).getLexema().equals("print") && tokens.get(number).getColumna() == 1){
                             fila = tokens.get(number).getFila();
                             columna = tokens.get(number).getColumna();
+                            System.out.println(columna);
                             estado = 1;
                         }else{
                             estado = -1;
@@ -1528,11 +1530,23 @@ estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta par
                     case 3:
                         if(parentesisAbierto()){
                             estado = 4;
-                        }else if(coma()){
-                            estado = 10;
+                        }else if(coma() || mas()){
+                            estado = 10;              
+                        }else{
+                            estado = 201;                          
+                        }
+                        break;
+                    case 201:
+                        System.out.println("aca");
+                        if(parentesisCerrado23()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Print Funcion", name, "Print Valido", "", fila, columna));
+                        }else if(parentesisCerrado()){
+                            estado = 22;
+estrucSintactico.add(new Estructura("Print Funcion", name, "Print Valido", "", fila, columna));
                         }else{
                             estado = -1;
-estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de cierre", fila, columna));                            
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta parentesis de Cierre", fila, columna));                            
                         }
                         break;
                     case 4:
@@ -1611,7 +1625,7 @@ estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Falta par
                     case 12:
                         if(condicionERROR(fila)){
                             estado = -1;
-estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Impresion Errone", fila, columna));
+estrucSintactico.add(new Estructura(errorSIn, "Print", "ERROR Print", "Impresion Erronea", fila, columna));
                         }else{
                         estado = 22;
 estrucSintactico.add(new Estructura("Print simple", "Print", "Print Valido", "", fila, columna));
@@ -2228,6 +2242,16 @@ estrucSintactico.add(new Estructura("Print simple", "Print", "Print Valido", "",
         }
         return false;
     }
+    private boolean mas() {
+    //sirve para aplicar condiciones varias
+        number++;
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number).getLexema().equals("+")) {
+                return true;
+            }
+        }
+        return false;
+    }
     //tokne de corchete abierto V
     private boolean corcheteAbierto() {
     //token para los abiertos
@@ -2328,6 +2352,15 @@ estrucSintactico.add(new Estructura("Print simple", "Print", "Print Valido", "",
     //si es un final de parentesis    
         for (int i = number; i < tokens.size(); i++) {
             if (tokens.get(number).getLexema().equals(")")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean parentesisCerrado23() {
+    //si es un final de parentesis    
+        for (int i = number; i < tokens.size(); i++) {
+            if (tokens.get(number-2).getLexema().equals(")")) {
                 return true;
             }
         }

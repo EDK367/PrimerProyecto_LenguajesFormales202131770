@@ -252,7 +252,7 @@ public class lexico extends javax.swing.JPanel {
     //eventos de codigo
     private void codigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigoKeyPressed
         // Boton run en donde se escribe
-        colorearTexto();
+        //colorearTexto();
         if (evt.getKeyCode() == KeyEvent.VK_F6) {
             run.doClick();
         }
